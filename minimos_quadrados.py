@@ -2,20 +2,20 @@ import numpy as np
 from typing import Union
 from abc import ABCMeta, abstractclassmethod
 
-class Regression(ABCMeta):
+class Regression(metaclass=ABCMeta):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
-        if type(xlist) is not Union[list, np.ndarray]:
+        if not isinstance(xlist, Union[list, np.ndarray]):
             raise TypeError
         self.__x = np.array(xlist)
-        if type(ylist) is not Union[list, np.ndarray]:
+        if not isinstance(xlist, Union[list, np.ndarray]): 
             raise TypeError
         self.__y = np.array(ylist)
         self.__coeff = self.coeff_regression()
 
     @property
-    def x(self) -> Union[list,np.ndarray]:
+    def x(self) -> np.ndarray:
         return self.__x
-    @property
+    @x.setter
     def x(self,xlist) -> None:
         if type(xlist) is not Union[np.ndarray,list]:
             raise TypeError
@@ -24,9 +24,9 @@ class Regression(ABCMeta):
 
     
     @property
-    def y(self) -> Union[list,np.ndarray]:
+    def y(self) -> np.ndarray:
         return self.__y
-    @property
+    @y.setter
     def y(self,ylist) -> None:
         if type(ylist) is not Union[np.ndarray,list]:
             raise TypeError
@@ -49,12 +49,12 @@ class Regression(ABCMeta):
         }
         return possibilities[kind]
 
-    @abstractclassmethod
+    # @abstractclassmethod
     def S_factor(self) -> float:
         pass
 
-    @abstractclassmethod
-    def coeff_regression(self) -> list[function]:
+    # @abstractclassmethod
+    def coeff_regression(self) -> list:
         pass
 
     @staticmethod
@@ -98,70 +98,75 @@ class Regression(ABCMeta):
 
 class LinRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
-        super.__init__(xlist, ylist)
+        super().__init__(xlist, ylist)
     
     def __str__(self) -> str:
         pass #return f"y = {str(b)} + {str(m)}x"
     
 class ExpRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
-        super.__init__(xlist, ylist)
+        super().__init__(xlist, ylist)
     
     def __str__(self) -> str:
         pass # return f"y = {str(b)} +{str(m)}*e^({str(a)}*x)
 
 class LogRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
-        super.__init__(xlist, ylist)
+        super().__init__(xlist, ylist)
 
     def __str__(self) -> str:
         pass # return f"y = {str(b)} + {str(m)}log(x)
 
 class PotRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
-        super.__init__(xlist, ylist)
+        super().__init__(xlist, ylist)
 
     def __str__(self) -> str:
         pass # return f"y = {str(b)} * {str(a)}x^{str(m)}
 
 class PolyRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
-        super.__init__(xlist, ylist)
+        super().__init__(xlist, ylist)
 
     def __str__(self) -> str:
         pass #return Polynomial
 
 class HypRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
-        super.__init__(xlist, ylist)
+        super().__init__(xlist, ylist)
 
     def __str__(self) -> str:
         pass #return f"y = 1/({str(b)} + {str(m)}x)"
 
 class InvRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
-        super.__init__(xlist, ylist)
+        super().__init__(xlist, ylist)
 
     def __str__(self) -> str:
         pass #return f"y = {str(b)} + {str(m)}/x"
 
 class LogisticRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
-        super.__init__(xlist, ylist)
+        super().__init__(xlist, ylist)
 
     def __str__(self) -> str:
         pass
 
 class SqrtRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
-        super.__init__(xlist, ylist)
+        super().__init__(xlist, ylist)
 
     def __str__(self) -> str:
         pass #return f"y = {str(b)} + {str(m)}sqrt(x)"
 
 class GaussRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
-        super.__init__(xlist, ylist)
+        super().__init__(xlist, ylist)
 
     def __str__(self) -> str:
         pass #return f"y = "
+
+
+obj = Regression([1,2,3],[1,2,3])
+
+print(type(obj('lin')))

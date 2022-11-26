@@ -22,18 +22,9 @@ class Polynomial:
             return Polynomial(aux)
 
         elif isinstance(other, Polynomial):
-            aux = []
-            if len(self.polynomial) > len(other.polynomial):
-                pt = self.polynomial
-                ot = other.polynomial
-            if len(self.polynomial) < len(other.polynomial):
-                pt = other.polynomial
-                ot = self.polynomial
-            for element in zip(self.polynomial, other.polynomial):
-                aux.append(element[0]+element[1])
-            for i in range(len(ot),len(pt)):
-                aux.append(pt[i])
-            return Polynomial(aux)
+            aux1, aux2 = np.array(list(reversed(self.polynomial))), np.array(list(reversed(other.polynomial)))
+            aux = np.polyadd(aux1,aux2)
+            return Polynomial(np.array(list(reversed(aux))))
         else:
             raise TypeError(f"incompatible types: {type(self)} and {type(other)}")
 
@@ -47,18 +38,9 @@ class Polynomial:
             return Polynomial(aux)
 
         elif isinstance(other, Polynomial):
-            aux = []
-            if len(self.polynomial) > len(other.polynomial):
-                pt = self.polynomial
-                ot = other.polynomial
-            if len(self.polynomial) < len(other.polynomial):
-                pt = other.polynomial
-                ot = self.polynomial
-            for element in zip(self.polynomial, other.polynomial):
-                aux.append(element[0]-element[1])
-            for i in range(len(ot),len(pt)):
-                aux.append(pt[i])
-            return Polynomial(aux)
+            aux1, aux2 = np.array(list(reversed(self.polynomial))), np.array(list(reversed(other.polynomial)))
+            aux = np.polysub(aux1,aux2)
+            return Polynomial(np.array(list(reversed(aux))))
         else:
             raise TypeError(f"incompatible types: {type(self)} and {type(other)}")
 
@@ -137,9 +119,9 @@ class Polynomial:
     def plot_graphic(self, x:list) -> None:
         pass
 
-    # ORDER
+    # DEGREE
     
-    def order(self) -> int:
+    def deg(self) -> int:
         return len(self.polynomial)-1
 
 
@@ -150,8 +132,10 @@ class Polynomial:
 
     pass
 
-obj = Polynomial(np.array([1,2,3]))
-obj1 = Polynomial([1,2,3, 4])
+obj = Polynomial(np.array([1,2,43,5,3,45,1,5]))
+obj1 = Polynomial([1,1,1])
 # print(2-obj)
 a = np.array([1,2,3])
 b = np.array([4,5,6])
+
+print(obj-obj1)
