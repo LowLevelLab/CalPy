@@ -35,41 +35,36 @@ class Array:
     
     def __add__(self, other):
         if isinstance(other, Union[list,np.ndarray]):
-            return self.array + np.array(other)
+            if isinstance(self, Vector):
+                return Vector(self.array + np.array(other))
+            else:
+                return Matrix(self.array + np.array(other))
         if isinstance(other, Union[Vector, Array, Matrix]):
-            return self.array +other.array
+            if isinstance(self, Vector):
+                return Vector(self.array + other.array)
+            else:
+                return Matrix(self.array + other.array)
 
     def __sub__(self, other):
         if isinstance(other, Union[list,np.ndarray]):
-            return self.array - np.array(other)
+            if isinstance(self, Vector):
+                return Vector(self.array - np.array(other))
+            else:
+                return Matrix(self.array - np.array(other))
         if isinstance(other, Union[Vector, Array, Matrix]):
-            return self.array +other.array
+            if isinstance(self, Vector):
+                return Vector(self.array - other.array)
+            else:
+                return Matrix(self.array - other.array)
 
     def __radd__(self, other):
         return self.__add__(other)
 
     def __rsub__(self, other):
-        return -self.__sub__(other)
-
-    def __mul__(self, other):
-        if isinstance(other, Union[float,int]):
-            return self.array * other
-        else:
-            pass
-        #     try:
-        #         for i in range(len(self)):
-        #             vector.append([])
-        #             for j in range(len(self[i])):
-        #                 vector[i].append(other*self[i][j])
-        #         return vector
-        #     except TypeError:
-        #         for element in self:
-        #             vector.append(other * element)
-        #         return vector
-        # elif type(other) == Array or type(other) == list:
-        #     other = Array(other)
-        #     return Array.array_multiplication(self, other)
-
+        aux = self.__sub__(other)
+        aux.array = - aux.array
+        return aux
+        
     def __rmul__(self, other):
         pass
 
@@ -96,11 +91,11 @@ class Matrix(Array):
 
     def __mul__(self, other):
         if isinstance(other, Union[float,int]):
-            return self.array * other
+            return Matrix(self.array * other)
         if isinstance(other, Matrix):
-            return self.matrix_multiplication(other)
+            return self._matrix_multiplication(other)
         if isinstance(other, Vector):
-            return self.linear_system(other)
+            return self._linear_system(other)
         else:
             raise TypeError
         pass
@@ -111,11 +106,11 @@ class Matrix(Array):
     """
 
 
-    def matrix_multiplication(self, other):
-        return self.array @ other.array
+    def _matrix_multiplication(self, other):
+        return Matrix(self.array @ other.array)
 
-    def linear_system(self, other):
-        return self.array @ other.array
+    def _linear_system(self, other):
+        return Vector(self.array @ other.array)
 
     def is_a_square_matrix(self):
         pass
@@ -257,20 +252,20 @@ class Vector(Array):
 
     def __mul__(self, other):
         if isinstance(other, Union[float,int]):
-            return self.array * other
+            return Vector(self.array * other)
         elif isinstance(other, Matrix):
-            return self.transpose_linear_system(other)
+            return self._transpose_linear_system(other)
         elif isinstance(other, Vector):
-            return self.dot_product(other)
+            return self._dot_product(other)
         else:
             pass
         pass
 
-    def transpose_linear_system(self, other):
-        return (other.array.transpose()@self.array.transpose()).transpose()
+    def _transpose_linear_system(self, other):
+        return Vector((other.array.transpose()@self.array.transpose()).transpose())
 
-    def dot_product(self, other):
-        return np.dot(self, other)
+    def _dot_product(self, other):
+        return Vector(np.dot(self, other))
 
     
 # """Union(int, float)"""
@@ -289,7 +284,8 @@ obj2 = np.array([2,3])
 print(len(obj1))
 obj = Vector(obj1)
 obj_ = Matrix(obj2)
-print(obj_+obj)
+print(obj_*obj)
+print(type(obj_* obj))
 
 for i in obj:
     print(i)

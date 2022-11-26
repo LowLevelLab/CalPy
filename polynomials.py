@@ -3,6 +3,11 @@ from typing import Union
 
 
 class Polynomial:
+
+    """
+    ### PROPERTIES ###
+    """
+
     def __init__(self, array: Union[np.ndarray, list]) -> None:
         self.__polynomial = np.array(array)
 
@@ -69,14 +74,14 @@ class Polynomial:
             aux = other*self.polynomial
             return Polynomial(aux)
         elif isinstance(other, Polynomial):
-            pass #for i, v in enumerate(self.polynomial)
+            return Polynomial(np.polymul(self.polynomial,other.polynomial))
         else:
             raise TypeError(f"incompatible types: {type(self)} and {type(other)}")
 
     def __rmul__(self, other):
         return self.__mul__(other)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, Union[float,int]):
             if len(self.polynomial) == 1:
                 return self.polynomial[0] == other
@@ -90,24 +95,24 @@ class Polynomial:
         else:
             raise TypeError(f"incompatible types: {type(self)} and {type(other)}")
     
-    def __call__(self, *args):
+    def __call__(self, *args) -> Union[float,int]:
         return self._horner_method(*args)
 
     def __truediv__(self, other):
         if isinstance(other, Union[float,int]):
             aux = self.polynomial/other
-            
             return Polynomial(aux)
-
-
         elif isinstance(other,Polynomial):
-            pass #for i, v in enumerate(self.polynomial)
+            aux = np.polydiv(self.polynomial, other.polynomial)
+            return (Polynomial(aux[0]), Polynomial(aux[1]))
         else:
             raise TypeError(f"incompatible types: {type(self)} and {type(other)}")
 
     def __floordiv__(self, other):
         if isinstance(other, Polynomial): 
-            return self.__truediv__[0]
+            aux = self.__truediv__(other)
+            return aux[0]
+
         else:
             raise TypeError(f"incompatible types: {type(self)} and {type(other)}")
 
@@ -119,9 +124,9 @@ class Polynomial:
         aux = aux.rstrip('+ ')
         return aux
       
-
     # HORNER METHOD
-    def _horner_method(self, x: float):
+
+    def _horner_method(self, x: float) -> Union[float,int]:
         result = self.polynomial[-1]
         for i in range(len(self.polynomial)-2,-1,-1):
             result = result * x + self.polynomial[i]
@@ -129,14 +134,24 @@ class Polynomial:
 
     # GRAPHIC
 
-    def plot_graphic(self, x:list):
+    def plot_graphic(self, x:list) -> None:
         pass
 
+    # ORDER
+    
+    def order(self) -> int:
+        return len(self.polynomial)-1
+
+
+    """
+    ### ROOT-FINDING METHODS ###
+    """
+
+
+    pass
 
 obj = Polynomial(np.array([1,2,3]))
 obj1 = Polynomial([1,2,3, 4])
 # print(2-obj)
 a = np.array([1,2,3])
 b = np.array([4,5,6])
-
-print(obj+obj1)
