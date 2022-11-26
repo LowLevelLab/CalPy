@@ -11,12 +11,12 @@ class Polynomial:
         return self.__polynomial
 
     def __add__(self, other):
-        if type(other) is float or type(other) is int:
+        if isinstance(other, Union[float,int]):
             aux = self.polynomial.copy()
             aux[0] += other
             return Polynomial(aux)
 
-        elif type(other) is Polynomial:
+        elif isinstance(other, Polynomial):
             aux = []
             if len(self.polynomial) > len(other.polynomial):
                 pt = self.polynomial
@@ -36,12 +36,12 @@ class Polynomial:
         return self.__add__(other)
 
     def __sub__(self, other):
-        if type(other) is float or type(other) is int:
+        if isinstance(other, Union[float,int]):
             aux = self.polynomial.copy()
             aux[0] -= other
             return Polynomial(aux)
 
-        elif type(other) is Polynomial:
+        elif isinstance(other, Polynomial):
             aux = []
             if len(self.polynomial) > len(other.polynomial):
                 pt = self.polynomial
@@ -65,10 +65,10 @@ class Polynomial:
         return Polynomial(aux2)
 
     def __mul__(self, other):
-        if type(other) is float or type(other) is int:
+        if isinstance(other, Union[float,int]):
             aux = other*self.polynomial
             return Polynomial(aux)
-        elif type(other) is Polynomial:
+        elif isinstance(other, Polynomial):
             pass #for i, v in enumerate(self.polynomial)
         else:
             raise TypeError(f"incompatible types: {type(self)} and {type(other)}")
@@ -77,12 +77,12 @@ class Polynomial:
         return self.__mul__(other)
 
     def __eq__(self, other):
-        if type(other) is float or type(other) is int:
+        if isinstance(other, Union[float,int]):
             if len(self.polynomial) == 1:
                 return self.polynomial[0] == other
             else:
                 return False
-        elif type(other) is Polynomial:
+        elif isinstance(other, Polynomial):
             for element in zip(self.polynomial, other.polynomial):
                 if not all(element[0]==element[i] for i in range(2)):
                     return False
@@ -94,19 +94,19 @@ class Polynomial:
         return self._horner_method(*args)
 
     def __truediv__(self, other):
-        if type(other) is float or type(other) is int:
+        if isinstance(other, Union[float,int]):
             aux = self.polynomial/other
             
             return Polynomial(aux)
 
 
-        elif type(other) is Polynomial:
+        elif isinstance(other,Polynomial):
             pass #for i, v in enumerate(self.polynomial)
         else:
             raise TypeError(f"incompatible types: {type(self)} and {type(other)}")
 
     def __floordiv__(self, other):
-        if type(other) is Polynomial: 
+        if isinstance(other, Polynomial): 
             return self.__truediv__[0]
         else:
             raise TypeError(f"incompatible types: {type(self)} and {type(other)}")

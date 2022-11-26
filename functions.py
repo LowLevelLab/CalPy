@@ -29,12 +29,13 @@ class Function:
         return self.function(*args)
 
     def __eq__(self, other):
-        x = np.arange(0, 10, 1000)
-        if self.function(x) == other.function(x):
-            return True
-        return False
+        # x = np.arange(0, 10, 1000)
+        # if self.function(x) == other.function(x):
+        #     return True
+        # return False
+        pass
 
-    def __divmod__(self, other):
+    def __truediv__(self, other):
         division = Function(self.function / other.function)
         return division
 
@@ -42,13 +43,16 @@ class Function:
         return abs(self.function)
 
     def __str__(self):
-        return self.string
+        pass
+
 
     """
     ### BASIC METHODS ###
     """
 
+
     # FIXED POINT THEOREM
+
     @staticmethod
     def fixed_point_theorem(iteration_function, interval):
         aux_function = Function(iteration_function)
@@ -57,8 +61,11 @@ class Function:
                 raise Exception('This iteration function is not valid in given interval')
 
     # DERIVATIVE OF THE FUNCTION
+
     def derivative(self, x0: float, interval: float=c.DELTA) -> float:
         return (self.function(x0 + interval) - self.function(x0)) / interval
+
+    # N-th DERIVATIVE
 
     def nth_derivative(self, x0:float, n: int, delta_x: float = c.DELTA):
         if n < 0:
@@ -115,6 +122,7 @@ class Function:
             return self.bisection(lower, mean_value, iterations - 1)
 
     # FALSE POSITION METHOD
+
     def false_position(self, lower: float,
                        upper: float,
                        iterations: int = c.ITERATIONS,
@@ -130,6 +138,7 @@ class Function:
         return x_1
 
     # FIXED POINT METHOD
+
     @staticmethod
     def fixed_point(iteration_function, x: float, interval: list,
                     iterations: int = c.ITERATIONS // 100,

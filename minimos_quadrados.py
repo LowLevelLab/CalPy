@@ -1,62 +1,61 @@
-class Regression:
-    def __init__(self, xlist: list, ylist: list):
-        self.x = xlist
-        self.y = ylist
+import numpy as np
+from typing import Union
+from abc import ABCMeta, abstractclassmethod
+
+class Regression(ABCMeta):
+    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
+        if type(xlist) is not Union[list, np.ndarray]:
+            raise TypeError
+        self.__x = np.array(xlist)
+        if type(ylist) is not Union[list, np.ndarray]:
+            raise TypeError
+        self.__y = np.array(ylist)
+        self.__coeff = self.coeff_regression()
+
+    @property
+    def x(self) -> Union[list,np.ndarray]:
+        return self.__x
+    @property
+    def x(self,xlist) -> None:
+        if type(xlist) is not Union[np.ndarray,list]:
+            raise TypeError
+        else:
+            self.__x = xlist
+
+    
+    @property
+    def y(self) -> Union[list,np.ndarray]:
+        return self.__y
+    @property
+    def y(self,ylist) -> None:
+        if type(ylist) is not Union[np.ndarray,list]:
+            raise TypeError
+        else:
+            self.__y = ylist
 
     def __call__(self, kind: str):
-        self.determine_function(kind)
+        possibilities = {
+            'exp' : ExpRegression(self.x, self.y),
+            'hpb' : HypRegression(self.x, self.y),
+            'lin' : LinRegression(self.x, self.y),
+            'log' : LogRegression(self.x, self.y),
+            'pol' : PolyRegression(self.x, self.y),
+            'pot' : PotRegression(self.x, self.y),
+            'inv' : InvRegression(self.x, self.y),
+            'lgt' : LogisticRegression(self.x,self.y),
+            'sqrt' : SqrtRegression(self.x,self.y),
+            'gss' : GaussRegression(self.x,self.y),
+            'opt' : 0
+        }
+        return possibilities[kind]
 
-    def determine_function(self, kind: str):
-        if kind == 'exp':
-            self.exp_regression()
-        if kind == 'hpb':
-            self.hyperbolic_regression()
-        if kind == 'lin':
-            self.lin_regression()
-        if kind == 'log':
-            self.log_regression()
-        if kind == 'poly':
-            self.poly_regression()
-        if kind == 'pot':
-            self.pot_regression()
-        if kind == 'inv':
-            self.inverse_regression()
+    @abstractclassmethod
+    def S_factor(self) -> float:
+        pass
 
-    @staticmethod
-    def term_by_term_product(array1: list, array2: list):
-        vector: list = []
-        for i in range(len(array1)):
-            vector.append(array2[i] * array1[i])
-        return vector
-
-    @staticmethod
-    def square_pot(array: list):
-        vector: list = []
-        for element in array:
-            vector.append(element ** 2)
-        return vector
-
-    @staticmethod
-    def linear_segmentation(lower: float, upper: float, factor: int):
-        space = [lower]
-        delta = (upper - lower) / factor
-        for n in range(factor):
-            space.append(space[n] + delta)
-        return space
-
-    @staticmethod
-    def invert_list(array: list):
-        vector = []
-        for element in array:
-            vector.append(1/element)
-        return vector
-
-    @staticmethod
-    def log_applier(array: list):
-        vector = []
-        for element in array:
-            vector.append()
-        return vector
+    @abstractclassmethod
+    def coeff_regression(self) -> list[function]:
+        pass
 
     @staticmethod
     def regression(x: list, y: list):
@@ -95,3 +94,74 @@ class Regression:
     def lin_regression(self):
         m, b = self.regression(self.x, self.y)
         return f"y = {str(b)} + {str(m)}x"
+
+
+class LinRegression(Regression):
+    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
+        super.__init__(xlist, ylist)
+    
+    def __str__(self) -> str:
+        pass #return f"y = {str(b)} + {str(m)}x"
+    
+class ExpRegression(Regression):
+    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
+        super.__init__(xlist, ylist)
+    
+    def __str__(self) -> str:
+        pass # return f"y = {str(b)} +{str(m)}*e^({str(a)}*x)
+
+class LogRegression(Regression):
+    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
+        super.__init__(xlist, ylist)
+
+    def __str__(self) -> str:
+        pass # return f"y = {str(b)} + {str(m)}log(x)
+
+class PotRegression(Regression):
+    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
+        super.__init__(xlist, ylist)
+
+    def __str__(self) -> str:
+        pass # return f"y = {str(b)} * {str(a)}x^{str(m)}
+
+class PolyRegression(Regression):
+    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
+        super.__init__(xlist, ylist)
+
+    def __str__(self) -> str:
+        pass #return Polynomial
+
+class HypRegression(Regression):
+    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
+        super.__init__(xlist, ylist)
+
+    def __str__(self) -> str:
+        pass #return f"y = 1/({str(b)} + {str(m)}x)"
+
+class InvRegression(Regression):
+    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
+        super.__init__(xlist, ylist)
+
+    def __str__(self) -> str:
+        pass #return f"y = {str(b)} + {str(m)}/x"
+
+class LogisticRegression(Regression):
+    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
+        super.__init__(xlist, ylist)
+
+    def __str__(self) -> str:
+        pass
+
+class SqrtRegression(Regression):
+    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
+        super.__init__(xlist, ylist)
+
+    def __str__(self) -> str:
+        pass #return f"y = {str(b)} + {str(m)}sqrt(x)"
+
+class GaussRegression(Regression):
+    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
+        super.__init__(xlist, ylist)
+
+    def __str__(self) -> str:
+        pass #return f"y = "

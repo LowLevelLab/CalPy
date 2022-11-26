@@ -1,4 +1,6 @@
 import numpy as np
+from error_types import DimensionError
+from typing import Union
 
 class Array:
     def __init__(self, arg: list) -> None:
@@ -32,18 +34,16 @@ class Array:
     #     return True
     
     def __add__(self, other):
-        if type(other) is list or type(other) is np.ndarray:
-            aux_other = Array(other)
-        if type(other) is Array:
-            aux_other = other
-        return self.array + aux_other.array
+        if isinstance(other, Union[list,np.ndarray]):
+            return self.array + np.array(other)
+        if isinstance(other, Union[Vector, Array, Matrix]):
+            return self.array +other.array
 
     def __sub__(self, other):
-        if type(other) is list or type(other) is np.ndarray:
-            aux_other = Array(other)
-        if type(other) is Array:
-            aux_other = other
-        return self.array - aux_other.array
+        if isinstance(other, Union[list,np.ndarray]):
+            return self.array - np.array(other)
+        if isinstance(other, Union[Vector, Array, Matrix]):
+            return self.array +other.array
 
     def __radd__(self, other):
         return self.__add__(other)
@@ -52,7 +52,7 @@ class Array:
         return -self.__sub__(other)
 
     def __mul__(self, other):
-        if type(other) == float or type(other) == int:
+        if isinstance(other, Union[float,int]):
             return self.array * other
         else:
             pass
@@ -86,20 +86,30 @@ class Array:
 
 class Matrix(Array):
 
+    """
+    ### PROPERTIES ###
+    """
+
+
     def __init__(self, arg: list) -> None:
         super().__init__(arg)
 
     def __mul__(self, other):
-        if type(other) is float or type(other) is int:
+        if isinstance(other, Union[float,int]):
             return self.array * other
-        if type(other) is Matrix:
+        if isinstance(other, Matrix):
             return self.matrix_multiplication(other)
-        elif type(other) is Vector:
+        if isinstance(other, Vector):
             return self.linear_system(other)
         else:
             raise TypeError
         pass
     
+
+    """
+    ### BASIC METHODS ###
+    """
+
 
     def matrix_multiplication(self, other):
         return self.array @ other.array
@@ -107,28 +117,59 @@ class Matrix(Array):
     def linear_system(self, other):
         return self.array @ other.array
 
+    def is_a_square_matrix(self):
+        pass
+
+    def determinant(self):
+        self.is_square_matrix()
+        row_number = len(self.array)
+        for i in range(row_number):
+            if self[i][i] != 0:
+                pivot = self[i][i]
+            else:
+                for j in range(i + 1, row_number):
+                    if self != 0:
+                        ans = self[i]
+                        self[i] = -self[j]
+                        self[j] = ans
+                        pivot = self[i][i]
+                        break
+
+            for j in range(i + 1, row_number):
+                if self[j][i] == 1:
+                    continue
+                else:
+                    self[j] = self[j] * pivot - self[j][i] * self[i]
+
+        return self.array[row_number - 1][row_number - 1]
+
+    def find_row(self, row: list):
+        if len(self[0]) != len(row):
+            raise DimensionError('incompatible dimensions')
+        for i in range(len(self)):
+            if self[i] == row:
+                return i
+        raise Exception('line not found')
+
+    def findColumn(self):
+        pass
+
+
+    """
+    ###LINEAR SYSTEM###
+    """
+
+
     def validate_gj(self):
+        pass
+
+    def gauss_jacobi(self, b):
         pass
 
     def validate_gs(self):
         pass
 
-
-
-    def gauss_jacobi(self, b):
-        pass
-
     def gauss_seidel(self, b):
-        pass
-
-
-    def determinant(self):
-        pass
-
-    def findRow(self):
-        pass
-
-    def findColumn(self):
         pass
 
     def successive_subs(self):
@@ -215,11 +256,11 @@ class Vector(Array):
         super().__init__(arg)
 
     def __mul__(self, other):
-        if type(other) is float or type(other) is int:
+        if isinstance(other, Union[float,int]):
             return self.array * other
-        if type(other) is Matrix:
+        elif isinstance(other, Matrix):
             return self.transpose_linear_system(other)
-        elif type(other) is Vector:
+        elif isinstance(other, Vector):
             return self.dot_product(other)
         else:
             pass
@@ -244,11 +285,11 @@ class Vector(Array):
 
 
 obj1 = np.array([1,2])
-obj2 = np.array([[2,3],[4,5]])
+obj2 = np.array([2,3])
 print(len(obj1))
 obj = Vector(obj1)
 obj_ = Matrix(obj2)
-print(obj_*obj)
+print(obj_+obj)
 
 for i in obj:
     print(i)

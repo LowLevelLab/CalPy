@@ -1,8 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-# from functions import Function
-# from polynomials import Polynomial
-# from array import Matrix, Array, Vector
 import constants as c
 from typing import Optional, Union
 

@@ -1,8 +1,7 @@
 import numpy as np
 
-g1 = lambda x: x
-g2 = lambda x: x*2
+x = np.array([1,2,3,4])
+y = np.array([1,2,1,1])
 
-print(type(g1))
-g1 = [g1]
-print(g1[0](1))
+
+print(x*y, 1/x, x**2, np.log(x), sum(x))
