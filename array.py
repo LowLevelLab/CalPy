@@ -3,10 +3,9 @@ import numpy as np
 class Array:
     def __init__(self, arg: list) -> None:
         self.array = np.array(arg)
-        self.max = len(arg)
 
     def __len__(self):
-        return self.max
+        return len(self.array)
 
     def __contains__(self, item):
         if item in self.array:
@@ -18,7 +17,7 @@ class Array:
         return self
 
     def __next__(self):
-        if self.n < self.max:
+        if self.n < len(self.array):
             result = self.array[self.n]
             self.n += 1
             return result
@@ -33,16 +32,16 @@ class Array:
     #     return True
     
     def __add__(self, other):
-        if type(other) == list or type(other) == np.ndarray:
+        if type(other) is list or type(other) is np.ndarray:
             aux_other = Array(other)
-        if type(other) == Array:
+        if type(other) is Array:
             aux_other = other
         return self.array + aux_other.array
 
     def __sub__(self, other):
-        if type(other) == list or type(other) == np.ndarray:
+        if type(other) is list or type(other) is np.ndarray:
             aux_other = Array(other)
-        if type(other) == Array:
+        if type(other) is Array:
             aux_other = other
         return self.array - aux_other.array
 
@@ -91,11 +90,12 @@ class Matrix(Array):
         super().__init__(arg)
 
     def __mul__(self, other):
-        super.__mul__(self,other)
-        if other == isinstance(Matrix):
-            self.matrix_multiplication(other)
-        elif other == isinstance(Vector):
-            self.linear_system(other)
+        if type(other) is float or type(other) is int:
+            return self.array * other
+        if type(other) is Matrix:
+            return self.matrix_multiplication(other)
+        elif type(other) is Vector:
+            return self.linear_system(other)
         else:
             raise TypeError
         pass
@@ -105,7 +105,106 @@ class Matrix(Array):
         return self.array @ other.array
 
     def linear_system(self, other):
+        return self.array @ other.array
+
+    def validate_gj(self):
         pass
+
+    def validate_gs(self):
+        pass
+
+
+
+    def gauss_jacobi(self, b):
+        pass
+
+    def gauss_seidel(self, b):
+        pass
+
+
+    def determinant(self):
+        pass
+
+    def findRow(self):
+        pass
+
+    def findColumn(self):
+        pass
+
+    def successive_subs(self):
+        pass
+
+    def retroactive_subs(self):
+        pass
+
+    def gauss_eng(self):
+        pass
+
+    def gauss_bigo(self):
+        pass
+
+    def gauss_elimination(self, pivot=False):
+        pass
+
+    def linear_conjugate_gradient(self):
+        pass
+
+    def LU_decomposition(self):
+        pass
+
+    def LU_solution(self):
+        pass
+
+    def LDU(self):
+        pass
+
+    def choleski(self):
+        pass
+
+    def solution_choleski(self):
+        pass
+
+    def tridiagonal(self):
+        pass
+
+    def pentadiagonal(self):
+        pass
+
+    def non_linear_newton(self):
+        pass
+
+    def newton_modified(self):
+        pass
+
+
+    
+
+    
+        
+
+    ### AUTOVALORES ###
+
+    def leverrier(self):
+        pass
+
+    def eigenvector(self):
+        pass
+
+    def LR_decomposition(self):
+        pass
+
+    def LR_method(self):
+        pass
+
+    def householder(self):
+        pass
+
+    def QR_method(self):
+        pass
+
+    def QR_eigenvalues(self):
+        pass
+
 
 
     pass
@@ -116,17 +215,18 @@ class Vector(Array):
         super().__init__(arg)
 
     def __mul__(self, other):
-        super.__mul__(self,other)
-        if other == isinstance(Matrix):
-            self.transpose_linear_system(other)
-        elif other == isinstance(Vector):
-            self.dot_product(other)
+        if type(other) is float or type(other) is int:
+            return self.array * other
+        if type(other) is Matrix:
+            return self.transpose_linear_system(other)
+        elif type(other) is Vector:
+            return self.dot_product(other)
         else:
             pass
         pass
 
     def transpose_linear_system(self, other):
-        pass
+        return (other.array.transpose()@self.array.transpose()).transpose()
 
     def dot_product(self, other):
         return np.dot(self, other)
@@ -143,14 +243,17 @@ class Vector(Array):
     pass
 
 
-obj1 = np.array([1,2,3])
-obj2 = np.array([2,3,4,5, 6])
+obj1 = np.array([1,2])
+obj2 = np.array([[2,3],[4,5]])
 print(len(obj1))
-obj = Array(obj1)
-obj.append(1, 2)
-print(obj)
+obj = Vector(obj1)
+obj_ = Matrix(obj2)
+print(obj_*obj)
 
-print(obj - obj2)
+for i in obj:
+    print(i)
+
+# print(obj - obj2)
 
 
 

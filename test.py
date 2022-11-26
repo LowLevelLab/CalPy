@@ -1,8 +1,8 @@
 import numpy as np
 
 g1 = lambda x: x
-g2 = lambda x: 2*x
+g2 = lambda x: x*2
 
-g3 = lambda x: g1*g2
-
-print(g3(3))
+print(type(g1))
+g1 = [g1]
+print(g1[0](1))
