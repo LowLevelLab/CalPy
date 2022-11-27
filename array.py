@@ -98,7 +98,6 @@ class Matrix(Array):
             return self._linear_system(other)
         else:
             raise TypeError
-        pass
     
 
     """
@@ -149,6 +148,15 @@ class Matrix(Array):
     def findColumn(self):
         pass
 
+    def transpose(self):
+        return Matrix(self.array.transpose())
+
+    def invert(self): 
+        pass
+
+    def append(self,vector):
+        pass
+
 
     """
     ###LINEAR SYSTEM###
@@ -156,7 +164,10 @@ class Matrix(Array):
 
 
     def validate_gj(self):
-        pass
+        for i in range(len(self)):
+            if sum([abs(aux) for aux in self[i]])/abs(self[i][i])-1 >= 1:
+                return False
+        return True
 
     def gauss_jacobi(self, b):
         pass
@@ -213,12 +224,10 @@ class Matrix(Array):
         pass
 
 
-    
-
-    
-        
-
+    """
     ### AUTOVALORES ###
+    """
+
 
     def leverrier(self):
         pass
@@ -240,7 +249,6 @@ class Matrix(Array):
 
     def QR_eigenvalues(self):
         pass
-
 
 
     pass
@@ -267,8 +275,6 @@ class Vector(Array):
     def _dot_product(self, other):
         return Vector(np.dot(self, other))
 
-    
-# """Union(int, float)"""
     def append(self, *args) -> None:
         original_size = len(self)
         final_size = len(self.array) + len(args)

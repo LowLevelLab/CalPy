@@ -89,6 +89,3 @@ class ODE:
 class PDE:
     pass
 
-
-obj = ODE([lambda x,y: 1, lambda x,y: 2])
-print(obj.euler(0,1,[0,0],5))

@@ -3,6 +3,7 @@ from polynomials import Polynomial
 import numpy as np
 import scipy.special as scp
 import matplotlib.pyplot as plt
+from typing import Optional, Union
 
 
 class Function:
@@ -25,8 +26,8 @@ class Function:
         multiplication = Function(self.function * other.function)
         return multiplication
 
-    def __call__(self, *args, **kwargs):
-        return self.function(*args)
+    def __call__(self, arg: Union[int,float]):
+        return self.function(arg)
 
     def __eq__(self, other):
         # x = np.arange(0, 10, 1000)
@@ -62,12 +63,12 @@ class Function:
 
     # DERIVATIVE OF THE FUNCTION
 
-    def derivative(self, x0: float, interval: float=c.DELTA) -> float:
+    def derivative(self, x0: Union[float,int], interval: float=c.DELTA) -> float:
         return (self.function(x0 + interval) - self.function(x0)) / interval
 
     # N-th DERIVATIVE
 
-    def nth_derivative(self, x0:float, n: int, delta_x: float = c.DELTA):
+    def nth_derivative(self, x0:Union[float,int], n: int, delta_x: float = c.DELTA):
         if n < 0:
             raise ValueError("n must be non-negative")
         if n == 0:
@@ -84,7 +85,7 @@ class Function:
 
     # NEWTON-RAPHSON METHOD
 
-    def newton_raphson(self, x: float, 
+    def newton_raphson(self, x: Union[float,int], 
                        iterations: int = c.ITERATIONS, 
                        error: float = c.ERROR) -> float:
         count = 0
@@ -99,14 +100,14 @@ class Function:
 
     # VALIDATION BISECTION METHOD
 
-    def validation_bisection(self, lower: float, upper: float) -> bool:
+    def validation_bisection(self, lower: Union[float,int], upper: Union[float,int]) -> bool:
         return self.function(lower) * self.function(upper) < 0
 
     # BISECTION METHOD
 
     def bisection(self, 
-                  lower: float, 
-                  upper: float, 
+                  lower: Union[float,int], 
+                  upper: Union[float,int], 
                   iterations: int = c.ITERATIONS, 
                   error: float = c.ERROR) -> float:
         if not self.validation_bisection(lower, upper):
@@ -123,8 +124,8 @@ class Function:
 
     # FALSE POSITION METHOD
 
-    def false_position(self, lower: float,
-                       upper: float,
+    def false_position(self, lower: Union[float,int],
+                       upper: Union[float,int],
                        iterations: int = c.ITERATIONS,
                        error: float = c.ERROR) -> float:
         x_0 = lower
@@ -140,7 +141,7 @@ class Function:
     # FIXED POINT METHOD
 
     @staticmethod
-    def fixed_point(iteration_function, x: float, interval: list,
+    def fixed_point(iteration_function, x: Union[float,int], interval: list[Union[float,int]],
                     iterations: int = c.ITERATIONS // 100,
                     error: float = c.ERROR) -> float:
         Function.fixed_point_theorem(iteration_function, interval)
@@ -158,8 +159,8 @@ class Function:
     # RECTANGLE RULE
 
     def rectangle_integration(self,
-                              lower: float,
-                              upper: float,
+                              lower: Union[float,int],
+                              upper: Union[float,int],
                               factor: int = c.FACTOR) -> float:
         h = (upper - lower) / factor
         x = np.arange(lower + h / 2, upper - h / 2, factor)
@@ -171,8 +172,8 @@ class Function:
     # SIMPSON RULE
 
     def simpson_13_method(self,
-                          lower: float,
-                          upper: float,
+                          lower: Union[float,int],
+                          upper: Union[float,int],
                           factor: int = 3 * c.FACTOR) -> float:
 
         h = (upper - lower) / factor
@@ -189,18 +190,47 @@ class Function:
     # ROMBERG METHOD
 
     def romberg_integration(self,
-                            lower: float,
-                            upper: float,
+                            lower: Union[float,int],
+                            upper: Union[float,int],
                             error: float = c.ERROR) -> float:
-        pass
-
+        def richardson(r,k):
+            for alfa in range(k-1,0,-1):
+                c = 4**(k-alfa)
+                r[alfa]=(c * r[alfa + 1] - r[alfa])/(c - 1.0)
+            return r
+        
+        r = np.zeros(21)
+        r[1] = self.trapeze_method(lower,upper)
+        R = r[1]
+        for k in range(2,21):
+            r[k] = self.trapeze_method(lower,upper,guess=r[k-1], factor=k)
+            r = richardson(r,k)
+            if abs(r[1] - R) < error * max(abs(r[1]), 1.0):
+                return r[1]
+            R=r[1]
+        raise ValueError("Romberg method does not converge")
+        
     # TRAPEZE METHOD
 
     def trapeze_method(self,
-                       lower: float, 
-                       upper: float, 
-                       factor: float = c.FACTOR) -> float:
-        pass
+                       lower: Union[float,int], 
+                       upper: Union[float,int],
+                       guess: Union[float,int] = 0,
+                       factor: float = c.FACTOR/4) -> float:
+
+        if factor == 1:
+            I = (self.function(lower)+self.function(upper))*(lower+upper)/2
+        else:
+            N = 2**(factor-2)
+            dx = (upper-lower)/N
+            x = lower + dx/2
+            s = 0
+            for i in range(N):
+                s += self.function(x)
+                x+= dx
+            I = (guess + dx * s)/2.0
+        return I
+
 
     """
     ### TAYLOR ###
@@ -208,7 +238,7 @@ class Function:
 
     # TAYLOR SERIES
 
-    def taylor_series(self, order: int, x0: float) -> Polynomial:
+    def taylor_series(self, order: int, x0: Union[float,int]) -> Polynomial:
         l = []
         for i in range(order):
             l.append(self.nth_derivative(x0,i)*x0**i/scp.factorial(i))
@@ -219,9 +249,25 @@ class Function:
     ### PLOTTING FUNCTION ###
     """
 
-    def plot_function(self) -> None:
-        pass
-
+    def plot_function(self,x: Union[list,tuple,np.ndarray],
+                      x_axis: str = 'x axis',
+                      y_axis: str = 'y axis',
+                      title: str = 'function',
+                      color: str = 'r',
+                      label: Optional[str] = None,
+                      local_legend: Optional[str] = None) -> None:
+        if label is not None:
+            l_def = label
+        else:
+            l_def = 'f(x)'
+        y = [self.function(xk) for xk in x]
+        xl = plt.xlabel(x_axis)
+        yl = plt.ylabel(y_axis)
+        ttl = plt.title(title)
+        la = plt.plot(x, y, color, label=l_def)
+        if local_legend is not None:
+            ll=plt.legend(local_legend)
+        plt.show()
 
 
 class MVFunction:

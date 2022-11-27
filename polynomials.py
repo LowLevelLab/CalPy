@@ -1,5 +1,6 @@
 import numpy as np
-from typing import Union
+from typing import Union, Optional
+import matplotlib.pyplot as plt
 
 
 class Polynomial:
@@ -128,8 +129,30 @@ class Polynomial:
 
     # GRAPHIC
 
-    def plot_graphic(self, x:list) -> None:
-        pass
+    def plot_function(self,x: Union[list,tuple,np.ndarray],
+                      x_axis: str = 'x axis',
+                      y_axis: str = 'y axis',
+                      title: str = 'function',
+                      color: str = 'r',
+                      label: Optional[str] = None,
+                      local_legend: Optional[str] = None) -> None:
+        if label is not None:
+            l_def = label
+        else:
+            l_def = 'f(x)'
+        y = [self.function(xk) for xk in x]
+        xl = plt.xlabel(x_axis)
+        yl = plt.ylabel(y_axis)
+        ttl = plt.title(title)
+        la = plt.plot(x, y, color, label=l_def)
+        if local_legend is not None:
+            ll=plt.legend(local_legend)
+        plt.show()
+
+    # COPY
+
+    def copy(self):
+        return Polynomial(self.polynomial.copy())
 
     # DEGREE
     
@@ -143,11 +166,3 @@ class Polynomial:
 
 
     pass
-
-obj = Polynomial(np.array([1,2,43,5,3,45,1,5]))
-obj1 = Polynomial([1,1,1])
-# print(2-obj)
-a = np.array([1,2,3])
-b = np.array([4,5,6])
-
-print(obj-obj1)

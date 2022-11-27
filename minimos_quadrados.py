@@ -189,7 +189,3 @@ class GaussRegression(Regression):
 
     def coeff_regression(self) -> tuple:
         pass
-
-obj = Regression([-1,0,1],[1/(1+1/np.e),1/2,1/(1+np.e)])
-
-print(obj('lgt'))
