@@ -83,6 +83,12 @@ class ODE:
 
     def _to_graphic(self, y: list)-> None:
         pass
+
+    
+    def to_frame(self):
+        pass
+
+    # __str__ involves to_frame() function
     
 
 

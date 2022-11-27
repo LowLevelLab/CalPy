@@ -26,8 +26,14 @@ class Function:
         multiplication = Function(self.function * other.function)
         return multiplication
 
-    def __call__(self, arg: Union[int,float]):
-        return self.function(arg)
+    def __call__(self, *args: Union[int,float,list,tuple,np.ndarray]):
+        if len(args) == 1 and isinstance(args[0],Union[int,float]):
+            return self.function(*args)
+        elif len(args) == 1 and not isinstance(args[0],Union[int,float]):
+            return np.array([self.function(element) for element in args[0]])
+        else:
+            return np.array([self.function(element) for element in args])
+
 
     def __eq__(self, other):
         # x = np.arange(0, 10, 1000)
@@ -76,6 +82,9 @@ class Function:
         if n == 1:
             return self.derivative(x0)
         return ((self.nth_derivative(x0+ delta_x, n-1)-self.nth_derivative(x0-delta_x,n-1))/2*delta_x)
+
+    def to_frame(self):
+        pass
 
 
     """
@@ -277,3 +286,5 @@ class MVFunction:
 # MODIFY __call__ : return np.array if given iterable
 # MODIFY __str__ : DATAFRAME 
 
+a = Function(lambda x: x)
+print(type(a([2,3,4])))

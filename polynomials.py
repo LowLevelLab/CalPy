@@ -90,7 +90,12 @@ class Polynomial:
             raise TypeError(f"incompatible types: {type(self)} and {type(other)}")
     
     def __call__(self, *args) -> Union[float,int]:
-        return self._horner_method(*args)
+        if len(args) == 1 and isinstance(args[0],Union[int,float]):
+            return self._horner_method(*args)
+        elif len(args) == 1 and not isinstance(args[0],Union[int,float]):
+            return np.array([self._horner_method(element) for element in args[0]])
+        else:
+            return np.array([self._horner_method(element) for element in args])
 
     def __truediv__(self, other):
         if isinstance(other, Union[float,int]):
@@ -121,7 +126,7 @@ class Polynomial:
       
     # HORNER METHOD
 
-    def _horner_method(self, x: float) -> Union[float,int]:
+    def _horner_method(self, x: Union[float,int]) -> Union[float,int]:
         result = self.polynomial[-1]
         for i in range(len(self.polynomial)-2,-1,-1):
             result = result * x + self.polynomial[i]
@@ -158,6 +163,9 @@ class Polynomial:
     
     def deg(self) -> int:
         return len(self.polynomial)-1
+
+    def to_frame(self):
+        pass
 
 
     """
