@@ -1,8 +1,12 @@
 import numpy as np
+from polynomials import Polynomial
 
-x = np.array([1,2,3,4])
-y = np.array([1,2,1,1])
 
-z = list(reversed(y))
-print(z)
-print(x*y, 1/x, x**2, np.log(x), sum(x))
+
+x = np.array([3.45])
+y = np.array([1.21,1])
+print(Polynomial([-2,1]))
+X = Polynomial(x)
+X *= Polynomial(y)
+print(X)
+

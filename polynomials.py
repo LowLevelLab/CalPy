@@ -31,6 +31,9 @@ class Polynomial:
     def __radd__(self,other):
         return self.__add__(other)
 
+    def __iadd__(self,other):
+        return self.__add__(other)
+
     def __sub__(self, other):
         if isinstance(other, Union[float,int]):
             aux = self.polynomial.copy()
@@ -51,14 +54,22 @@ class Polynomial:
             aux2[i] = -v
         return Polynomial(aux2)
 
+    def __isub__(self,other):
+        return self.__sub__(other)
+
     def __mul__(self, other):
         if isinstance(other, Union[float,int]):
             aux = other*self.polynomial
             return Polynomial(aux)
         elif isinstance(other, Polynomial):
-            return Polynomial(np.polymul(self.polynomial,other.polynomial))
+            aux1, aux2 = np.array(list(reversed(self.polynomial))), np.array(list(reversed(other.polynomial)))
+            aux = np.polymul(aux1,aux2)
+            return Polynomial(np.array(list(reversed(aux))))
         else:
             raise TypeError(f"incompatible types: {type(self)} and {type(other)}")
+
+    def __imul__(self, other):
+        return self.__mul__(other)
 
     def __rmul__(self, other):
         return self.__mul__(other)
@@ -85,8 +96,9 @@ class Polynomial:
             aux = self.polynomial/other
             return Polynomial(aux)
         elif isinstance(other,Polynomial):
-            aux = np.polydiv(self.polynomial, other.polynomial)
-            return (Polynomial(aux[0]), Polynomial(aux[1]))
+            aux1, aux2 = np.array(list(reversed(self.polynomial))), np.array(list(reversed(other.polynomial)))
+            aux = np.polydiv(aux1,aux2)
+            return (Polynomial(np.array(list(reversed(aux[0])))), Polynomial(np.array(list(reversed(aux[1])))))
         else:
             raise TypeError(f"incompatible types: {type(self)} and {type(other)}")
 
