@@ -2,6 +2,7 @@ import numpy as np
 from polynomials import Polynomial
 from differential_equations import ODE
 from functions import Function
+import pandas as pd
 
 # fig = plt.figure()
 # ax = fig.add_subplot(1, 1, 1)
@@ -11,3 +12,9 @@ from functions import Function
 # ax.spines['top'].set_color('none')
 # ax.xaxis.set_ticks_position('bottom')
 # ax.yaxis.set_ticks_position('left')
+
+a = np.array([[1,2,3,4],[1,2,3,4]])
+b = np.array([[1,2,3,4],[1,2,3,4]])
+c = (a==b).tolist()
+d =pd.DataFrame()
+print(type(d))

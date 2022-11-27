@@ -283,8 +283,5 @@ class MVFunction:
     pass
 
 
-# MODIFY __call__ : return np.array if given iterable
 # MODIFY __str__ : DATAFRAME 
 
-a = Function(lambda x: x)
-print(type(a([2,3,4])))

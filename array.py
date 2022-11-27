@@ -1,9 +1,11 @@
 import numpy as np
 from error_types import DimensionError
 from typing import Union
+import pandas as pd
+
 
 class Array:
-    def __init__(self, arg: list) -> None:
+    def __init__(self, arg: Union[list,np.ndarray]) -> None:
         self.array = np.array(arg)
 
     def __len__(self):
@@ -26,12 +28,19 @@ class Array:
         else:
             raise StopIteration
 
-    # def __eq__(self, other):
-    #     Array.dimension_comparison(self, other)
-    #     for i in range(len(self.array)):
-    #         if self.array[i] != other[i]:
-    #             return False
-    #     return True
+    def __eq__(self, other):
+        if isinstance(self,Matrix) and isinstance(other,Matrix):
+            for i,v in enumerate(self.array):
+                if not all((v == other[i]).tolist()):
+                    return False
+            return True
+        elif isinstance(self,Vector) and isinstance(other,Vector):
+            for i,v in enumerate(self.array):
+                if not (v == other[i]).tolist():
+                    return False
+            return True
+        else:
+            return False
     
     def __add__(self, other):
         if isinstance(other, Union[list,np.ndarray]):
@@ -60,10 +69,16 @@ class Array:
     def __radd__(self, other):
         return self.__add__(other)
 
+    def __iadd__(self,other):
+        return self.__add__(other)
+
     def __rsub__(self, other):
         aux = self.__sub__(other)
         aux.array = - aux.array
         return aux
+
+    def __isub__(self,other):
+        return self.__sub__(other)
         
     def __rmul__(self, other):
         pass
@@ -156,6 +171,15 @@ class Matrix(Array):
 
     def append(self,vector):
         pass
+
+    def to_list(self) -> list:
+        pass
+
+    def to_frame(self) -> pd.core.frame.Dataframe:
+        pass
+
+    def to_nparray(self) -> np.ndarray:
+        return self.array
 
 
     """
@@ -282,22 +306,11 @@ class Vector(Array):
         for i in range(len(args)):
             self.array[original_size+i] = args[i]
 
+    def to_list(self) -> list:
+        return list(self)
+
+    def to_nparray(self) -> np.ndarray:
+        return self.array
+
+
     pass
-
-
-obj1 = np.array([1,2])
-obj2 = np.array([2,3])
-print(len(obj1))
-obj = Vector(obj1)
-obj_ = Matrix(obj2)
-print(obj_*obj)
-print(type(obj_* obj))
-
-for i in obj:
-    print(i)
-
-# print(obj - obj2)
-
-
-
-
