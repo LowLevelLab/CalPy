@@ -89,3 +89,4 @@ class ODE:
 class PDE:
     pass
 
+# MODIFY __str__ : DATAFRAME

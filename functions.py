@@ -266,10 +266,14 @@ class Function:
         ttl = plt.title(title)
         la = plt.plot(x, y, color, label=l_def)
         if local_legend is not None:
-            ll=plt.legend(local_legend)
+            ll=plt.legend(loc = local_legend)
         plt.show()
 
 
 class MVFunction:
     pass
+
+
+# MODIFY __call__ : return np.array if given iterable
+# MODIFY __str__ : DATAFRAME 
 

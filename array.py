@@ -76,7 +76,7 @@ class Array:
 
     def __str__(self) -> str:
         return str(self.array)
-
+# MODIFY __str__ : DATAFRAME
 
 
 class Matrix(Array):
