@@ -28,7 +28,18 @@ class Function:
         return multiplication
 
     def __call__(self, *args: Union[int,float,list,tuple,np.ndarray]):
-        return np.array(self.function(*args))
+        if all([isinstance(i,Union[float,int]) for i in args]):
+            return np.array(self.function(*args))
+        else:
+            try:
+                if all([len(args[0]) == len(args[i]) for i in range(len(args))]):
+                    args = [np.array(element) for element in args]
+                    return self.function(*args)
+                    # breakpoint()
+                    # for element in args:
+                    #     aux.append(self.function(np.array(element)))
+            except TypeError:
+                raise TypeError("Invalid types")
 
 
     def __eq__(self, other):
@@ -277,6 +288,31 @@ class Function:
         plt.show()
 
     """
+    def steffensen
+
+    def steffesen(f, x0, tol, maxIter):
+
+    def g(x):
+        return (f(x + f(x))/f(x)) - 1;
+
+    i = 0;
+    x_k = [x0];
+    y_k = [f(x0)];
+
+    while(abs(f(x_k[-1])) > tol or i > maxIter):
+
+        next_x = x_k[-1] - f(x_k[-1])/g(x_k[-1]);
+        
+        x_k.append(next_x);
+        y_k.append(f(next_x));
+
+    # print(x_k);
+    # print(y_k);    
+
+    return x_k[-1];
+
+
+
     def laplace_transform
     def fourier_transform
     """
@@ -285,5 +321,3 @@ class Function:
 class MVFunction:
     pass
 
-
-# MODIFY __str__ : DATAFRAME 

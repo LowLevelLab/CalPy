@@ -9,7 +9,7 @@ import pandas as pd
 
 
 class ODE:
-    def __init__(self, functions:list[Function], x:Optional[Union[list,np.ndarray]] =None) -> None:
+    def __init__(self, functions: Union[list,np.ndarray], x: Optional[Union[list,np.ndarray]]= None) -> None:
         if isinstance(x, Union[list,np.ndarray]):
             self.__x_interval = np.array(x)
         else:
@@ -17,8 +17,6 @@ class ODE:
         if not isinstance(functions, list):
             l = [functions]
             functions = l
-        if not isinstance(functions[0],Function):
-            functions = [Function(element) for element in functions]
         self.__functions = Vector(functions)
 
     @property
@@ -165,8 +163,8 @@ class ODE:
         df.set_index('x',inplace=True)
         return df
 
-    
 
+# NYSTROM
 
 class PDE:
     pass

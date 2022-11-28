@@ -10,3 +10,8 @@ a = ODE([lambda x,y,z: x, lambda x,y,z: x])
 y = a.euler2(y0=[1,0],graphic=True,n=200)
 print(y)
 
+a = lambda x,y: x+y
+b = lambda x,y: x-y
+
+c = Function(a)
+print(c([1,2,3],[1,2,3]))

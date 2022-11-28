@@ -98,6 +98,7 @@ class Polynomial:
             return np.array([self._horner_method(element) for element in args[0]])
         else:
             return np.array([self._horner_method(element) for element in args])
+        # return np.array(self.function(*args))
 
     def __truediv__(self, other):
         if isinstance(other, Union[float,int]):
