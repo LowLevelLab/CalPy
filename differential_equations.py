@@ -42,7 +42,8 @@ class ODE:
               x0: Optional[Union[int,float]]=None,
               xf: Optional[Union[int,float]]=None,
               graphic: bool = False,
-              n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
+              df: bool = True,
+              n: int = 10*c.ITERATIONS):
 
         if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
@@ -59,7 +60,10 @@ class ODE:
         y = y.transpose()
         if graphic:
             self._to_graphic(y,n)
-        return self.to_frame(aux_x,y)
+        if df:
+            return self.to_frame(aux_x,y)
+        else:
+            return y
             
 
     def euler2(self,
@@ -67,31 +71,55 @@ class ODE:
                x0: Optional[Union[int,float]]=None,
                xf: Optional[Union[int,float]]=None,
                graphic: bool = False,
-               n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
+               df: bool = True,
+               n: int = 10*c.ITERATIONS):
 
-        if bool(self._limit_check()):
+        if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
         else:
-            step = (max(self.__x_interval)-min(self.__x_interval))/n
+            x0 = min(self.__x_interval)
+            xf = max(self.__x_interval)
+            step = (xf-x0)/n
+        aux_x = np.arange(x0, xf, step)
+        aux_y = self.euler(y0,x0,xf,df=False,n=n).transpose()
+        y = np.array([np.zeros(n) for yk in y0]).transpose()
+        y[0] = y0
+        for i in range(1,n-1): 
+            y[i] = y[i-1] + step*((aux_y[i]-aux_y[i-1])/step+(aux_y[i+1]-aux_y[i])/step)/2
+        y[-1] = aux_y[-1]
+        y = y.transpose()
+        if graphic:
+            self._to_graphic(y,n)
+        if df:
+            return self.to_frame(aux_x,y)
+        else:
+            return y
         
     def heun(self,
              y0:Union[list,np.ndarray],
              x0: Optional[Union[int,float]]=None,
              xf: Optional[Union[int,float]]=None,
              graphic: bool = False,
-             n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
+             df: bool = True,
+             n: int = 10*c.ITERATIONS):
 
         if bool(self._limit_check()):
             step = (xf-x0)/n
         else:
-            step = (max(self.__x_interval)-min(self.__x_interval))/n
+            x0 = min(self.__x_interval)
+            xf = max(self.__x_interval)
+            step = (xf-x0)/n
+        aux_x = np.arange(x0, xf, step)
+        y = np.array([np.zeros(n) for yk in y0]).transpose()
+        y[0] = y0
         
     def rk4(self, 
             y0:Union[list,np.ndarray],
             x0: Optional[Union[int,float]]=None,
             xf: Optional[Union[int,float]]=None,
             graphic: bool = False,
-            n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
+            df: bool = True,
+            n: int = 10*c.ITERATIONS):
 
         if bool(self._limit_check()):
             step = (xf-x0)/n
@@ -104,6 +132,7 @@ class ODE:
             y0: list[Union[int,float]], 
             yf: list[Union[int,float]],
             graphic: bool = False,
+            df: bool = True,
             n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
 
             pass
@@ -141,5 +170,3 @@ class ODE:
 
 class PDE:
     pass
-
-# MODIFY __str__ : DATAFRAME
