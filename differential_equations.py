@@ -23,6 +23,10 @@ class ODE:
     @property
     def functions(self):
         return self.__functions
+    
+    @property
+    def x_interval(self):
+        return self.__x_interval
 
     def _limit_check(self, x0: Optional[Union[int,float]], xf: Optional[Union[int,float]]) -> int:
         if x0 is None and xf is None:
@@ -37,8 +41,7 @@ class ODE:
               x0: Optional[Union[int,float]]=None,
               xf: Optional[Union[int,float]]=None,
               graphic: bool = False,
-
-              n: int = 100*c.ITERATIONS) -> list[np.ndarray]:
+              n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
 
         if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
@@ -53,36 +56,41 @@ class ODE:
         for i in range(1,n): 
             y[i] = y[i-1] + step*(self.functions(aux_x[i], *y[i-1])).array
         y = y.transpose()
-        if not graphic:
-            return self.to_frame(y)
-        else:
+        if graphic:
             self._to_graphic(y,n)
-        
+        return self._to_frame(y)
+            
 
-    def euler2(self,x0: Optional[Union[int,float]],
-               xf: Optional[Union[int,float]],
-               y0:list,
-               n: int = 100*c.ITERATIONS) -> list[np.ndarray]:
-
-        if bool(self._limit_check()):
-            step = (xf-x0)/n
-        else:
-            step = (max(self.__x_interval)-min(self.__x_interval))/n
-        
-    def heun(self,x0: Optional[Union[int,float]],
-             xf: Optional[Union[int,float]],
-             y0:list,
-             n: int = 100*c.ITERATIONS) -> list[np.ndarray]:
+    def euler2(self,
+               y0:Union[list,np.ndarray],
+               x0: Optional[Union[int,float]]=None,
+               xf: Optional[Union[int,float]]=None,
+               graphic: bool = False,
+               n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
 
         if bool(self._limit_check()):
             step = (xf-x0)/n
         else:
             step = (max(self.__x_interval)-min(self.__x_interval))/n
         
-    def rk4(self,x0: Optional[Union[int,float]],
-            xf: Optional[Union[int,float]],
-            y0:list,
-            n: int = 100*c.ITERATIONS) -> list[np.ndarray]:
+    def heun(self,
+             y0:Union[list,np.ndarray],
+             x0: Optional[Union[int,float]]=None,
+             xf: Optional[Union[int,float]]=None,
+             graphic: bool = False,
+             n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
+
+        if bool(self._limit_check()):
+            step = (xf-x0)/n
+        else:
+            step = (max(self.__x_interval)-min(self.__x_interval))/n
+        
+    def rk4(self, 
+            y0:Union[list,np.ndarray],
+            x0: Optional[Union[int,float]]=None,
+            xf: Optional[Union[int,float]]=None,
+            graphic: bool = False,
+            n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
 
         if bool(self._limit_check()):
             step = (xf-x0)/n
@@ -93,19 +101,34 @@ class ODE:
             x0: Union[int,float], 
             xf: Union[int,float], 
             y0: list[Union[int,float]], 
-            yf: list[Union[int,float]]) -> list[np.ndarray]:
+            yf: list[Union[int,float]],
+            graphic: bool = False,
+            n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
 
             pass
         
 
-    def _to_graphic(self, y: list)-> None:
-        pass
+    def _to_graphic(self,
+                    y: list,
+                    n: int,
+                    title: str = 'graphics',
+                    x_axis:str='x axis',
+                    y_axis: str = 'y axis',
+                    color: str = 'r')-> None:
+
+        x = np.arange(self.x_interval[0],self.x_interval[1],(self.x_interval[1]-self.x_interval[0])/n)
+        l = []
+        xl = plt.xlabel(x_axis)
+        yl = plt.ylabel(y_axis)
+        ttl = plt.title(title)
+        for yk in y:
+            l.append(plt.plot(x,yk,color))
+        plt.show()
 
     
-    def to_frame(self):
+    def _to_frame(self, *args):
         pass
 
-    # __str__ involves to_frame() function
     
 
 
