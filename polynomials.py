@@ -1,6 +1,8 @@
 import numpy as np
 from typing import Union, Optional
 import matplotlib.pyplot as plt
+from complex import Complex
+import pandas as pd
 
 
 class Polynomial:
@@ -118,8 +120,8 @@ class Polynomial:
 
 
     def __str__(self) -> str:
-        aux = f'{str(self.polynomial[0])} + '
-        for i in range(1,len(self.polynomial)):
+        aux = f'{str(self.polynomial[0])} + {str(self.polynomial[1])}x + '
+        for i in range(2,len(self.polynomial)):
             aux += str(self.polynomial[i]) + f'x^{i} + '
         aux = aux.rstrip('+ ')
         return aux
@@ -164,8 +166,21 @@ class Polynomial:
     def deg(self) -> int:
         return len(self.polynomial)-1
 
-    def to_frame(self):
-        pass
+    def to_frame(self, *args) -> pd.core.frame.DataFrame:
+        aux = pd.DataFrame(data= [list(*args),self(*args)],index=['x','f(x)']).T
+        aux.set_index('x', inplace=True)
+        return aux
+
+    # DERIVATIVE
+
+    def derivative(self, n:int = 1):
+        l = [i*self.polynomial[i] for i in range(len(self.polynomial))]
+        l.pop(0)
+        aux = Polynomial(l)
+        if n == 1:
+            return aux
+        else:
+            return aux.derivative(n-1)
 
 
     """

@@ -4,6 +4,7 @@ import numpy as np
 import scipy.special as scp
 import matplotlib.pyplot as plt
 from typing import Optional, Union
+import pandas as pd
 
 
 class Function:
@@ -83,8 +84,10 @@ class Function:
             return self.derivative(x0)
         return ((self.nth_derivative(x0+ delta_x, n-1)-self.nth_derivative(x0-delta_x,n-1))/2*delta_x)
 
-    def to_frame(self):
-        pass
+    def to_frame(self, *args) -> pd.core.frame.DataFrame:
+        aux = pd.DataFrame(data= [list(*args),self(*args)],index=['x','f(x)']).T
+        aux.set_index('x', inplace=True)
+        return aux
 
 
     """
@@ -278,10 +281,14 @@ class Function:
             ll=plt.legend(loc = local_legend)
         plt.show()
 
+    """
+    def laplace_transform
+    def fourier_transform
+    """
+
 
 class MVFunction:
     pass
 
 
 # MODIFY __str__ : DATAFRAME 
-

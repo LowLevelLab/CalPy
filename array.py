@@ -91,6 +91,7 @@ class Array:
 
     def __str__(self) -> str:
         return str(self.array)
+
 # MODIFY __str__ : DATAFRAME
 
 
@@ -113,7 +114,15 @@ class Matrix(Array):
             return self._linear_system(other)
         else:
             raise TypeError
-    
+
+    '''
+    def __pow__()
+    def__rmul__
+    def__imul__
+    def__abs__
+    def__neg__
+    '''   
+
 
     """
     ### BASIC METHODS ###
@@ -311,6 +320,5 @@ class Vector(Array):
 
     def to_nparray(self) -> np.ndarray:
         return self.array
-
 
     pass

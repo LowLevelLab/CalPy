@@ -174,7 +174,7 @@ class LogisticRegression(Regression):
             self.lim=1
 
     def __str__(self) -> str:
-        return str(self.lim) #f"y = {self.lim}/(1+e^({self.coeff[0]}*(x-{self.coeff[1]}))"
+        return str(self.lim) #f"y = {self.lim}/(1+e^({self.coeff[0]}*(x-{self.coeff[1]})))"
 
     def coeff_regression(self) -> tuple:
         pass

@@ -77,8 +77,5 @@ class LagrangeInterpolation(Interpolation):
         
     pass
 
-obj = NewtonInterpolation([0,1,2,3,4],[1,2,3,4,5])
-obj1 = LagrangeInterpolation([1,2,3,4,5],[2,2.5,3,5,8])
-
 
 # TABLE: DATAFRAME

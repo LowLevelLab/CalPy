@@ -12,9 +12,7 @@ import pandas as pd
 # ax.spines['top'].set_color('none')
 # ax.xaxis.set_ticks_position('bottom')
 # ax.yaxis.set_ticks_position('left')
-
-a = np.array([[1,2,3,4],[1,2,3,4]])
-b = np.array([[1,2,3,4],[1,2,3,4]])
-c = (a==b).tolist()
-d =pd.DataFrame()
-print(type(d))
+a = complex(1, 2)
+b = complex(3, 4)
+c = Polynomial([1,2,3,4])
+print(c.derivative(1),c.derivative(2))
