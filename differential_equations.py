@@ -120,6 +120,38 @@ class ODE:
             return self.to_frame(aux_x,y)
         else:
             return y
+
+    def nystrom(self, 
+                y0:Union[list,np.ndarray],
+                x0: Optional[Union[int,float]]=None,
+                xf: Optional[Union[int,float]]=None,
+                graphic: bool = False,
+                df: bool = True,
+                n: int = 10*c.ITERATIONS):
+        
+        if bool(self._limit_check(x0,xf)):
+            step = (xf-x0)/n
+        else:
+            x0 = min(self.__x_interval)
+            xf = max(self.__x_interval)
+            step = (xf-x0)/n
+        aux_x = np.arange(x0, xf, step)
+        y = np.array([np.zeros(n) for yk in y0]).transpose()
+        k1,k2,k3 = y.copy(),y.copy(),y.copy()
+        y[0] = y0
+
+        for i in range(n-1):
+            k1[i] = self.functions(aux_x[i],*y[i])
+            k2[i] = self.functions(aux_x[i]+2*step/3, *(y[i]+2*step*k1[i]/3))
+            k3[i] = self.functions(aux_x[i]+2*step/3, *(y[i]+2*step*k2[i]/3))
+            y[i+1] = y[i] + (step/4)*(k1[i]+(3/2)*(k2[i]+k3[i]))
+        y=y.transpose()
+        if graphic:
+            self._to_graphic(y,n)
+        if df:
+            return self.to_frame(aux_x,y)
+        else:
+            return y
         
     def rk4(self, 
             y0:Union[list,np.ndarray],
@@ -129,10 +161,29 @@ class ODE:
             df: bool = True,
             n: int = 10*c.ITERATIONS):
 
-        if bool(self._limit_check()):
+        if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
         else:
-            step = (max(self.__x_interval)-min(self.__x_interval))/n
+            x0 = min(self.__x_interval)
+            xf = max(self.__x_interval)
+            step = (xf-x0)/n
+        aux_x = np.arange(x0, xf, step)
+        y = np.array([np.zeros(n) for yk in y0]).transpose()
+        k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
+        y[0] = y0
+        for i in range(n -1):
+            k1[i] = step * self.functions(aux_x[i], *y[i])
+            k2[i] = step * self.functions(aux_x[i] + step / 2, *(y[i] + k1[i] / 2))
+            k3[i] = step * self.functions(aux_x[i] + step / 2, *(y[i] + k2[i] / 2))
+            k4[i] = step * self.functions(aux_x[i] + step, *(y[i] + k3[i]))
+            y[i+1] = y[i] + (k1[i] + 2 * (k2[i] + k3[i]) + k4[i]) / 6
+        y=y.transpose()
+        if graphic:
+            self._to_graphic(y,n)
+        if df:
+            return self.to_frame(aux_x,y)
+        else:
+            return y
 
     def pvc(self, 
             x0: Union[int,float], 

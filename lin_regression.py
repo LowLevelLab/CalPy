@@ -212,6 +212,3 @@ class GaussRegression(Regression):
 
     def coeff_regression(self) -> tuple:
         pass
-
-
-# def to_function(): return the function found
