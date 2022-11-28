@@ -2,44 +2,56 @@ import numpy as np
 import matplotlib.pyplot as plt
 import constants as c
 from typing import Optional, Union
+from functions import Function
+from arrays import Vector
 
 
 
 class ODE:
-    def __init__(self, functions:list, x:Optional[list] =None) -> None:
-        if type(x) is list:
-            self.__x_interval = x
+    def __init__(self, functions:list[Function], x:Optional[Union[list,np.ndarray]] =None) -> None:
+        if isinstance(x, Union[list,np.ndarray]):
+            self.__x_interval = np.array(x)
         else:
-            self.__x_interval = [0,1]
-        if type(functions) is not list:
+            self.__x_interval = np.array([0,1])
+        if not isinstance(functions, list):
             l = [functions]
             functions = l
-        self.__functions = functions
+        if not isinstance(functions[0],Function):
+            functions = [Function(element) for element in functions]
+        self.__functions = Vector(functions)
+
+    @property
+    def functions(self):
+        return self.__functions
 
     def _limit_check(self, x0: Optional[Union[int,float]], xf: Optional[Union[int,float]]) -> int:
-        if type(x0) is None:
-            if type(xf) is None:
-                return 0
-            else:
-                raise ValueError
+        if x0 is None and xf is None:
+            return 0
+        elif x0 is not None and xf is not None:
+            return 1
         else:
-            if type(xf) is None:
-                raise ValueError
-            else:
-                return 1
+            raise ValueError
 
-    def euler(self,x0: Optional[Union[int,float]],
-              xf: Optional[Union[int,float]],
-              y0:list,
+    def euler(self,
+              y0:Union[list,np.ndarray],
+              x0: Optional[Union[int,float]]=None,
+              xf: Optional[Union[int,float]]=None,
               n: int = 100*c.ITERATIONS) -> list[np.ndarray]:
 
-        if bool(self._limit_check()):
+        if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
         else:
-            step = (max(self.__x_interval)-min(self.__x_interval))/n
+            x0 = min(self.__x_interval)
+            xf = max(self.__x_interval)
+            step = (xf-x0)/n
         
-        y = np.array([np.zeros(n) for yk in y0])
-        aux_x = np.arange(x0, xf, step) 
+        y = np.array([np.zeros(n) for yk in y0]).transpose()
+        y[0] = y0
+        aux_x = np.arange(x0, xf, step)
+        for i in range(1,n): 
+            y[i] = y[i-1] + step*(self.functions(aux_x[i], *y[i-1])).array
+        y = y.transpose()
+        return y
         
 
     def euler2(self,x0: Optional[Union[int,float]],

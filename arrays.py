@@ -2,6 +2,7 @@ import numpy as np
 from error_types import DimensionError
 from typing import Union
 import pandas as pd
+from complex import Complex
 
 
 class Array:
@@ -91,6 +92,9 @@ class Array:
 
     def __str__(self) -> str:
         return str(self.array)
+
+    def __call__(self, *args):
+        pass
 
 # MODIFY __str__ : DATAFRAME
 
@@ -184,7 +188,7 @@ class Matrix(Array):
     def to_list(self) -> list:
         pass
 
-    def to_frame(self) -> pd.core.frame.Dataframe:
+    def to_frame(self) -> pd.core.frame.DataFrame:
         pass
 
     def to_nparray(self) -> np.ndarray:
@@ -292,15 +296,18 @@ class Vector(Array):
         super().__init__(arg)
 
     def __mul__(self, other):
-        if isinstance(other, Union[float,int]):
+        if isinstance(other, Union[float,int, Complex]):
             return Vector(self.array * other)
         elif isinstance(other, Matrix):
             return self._transpose_linear_system(other)
         elif isinstance(other, Vector):
             return self._dot_product(other)
         else:
-            pass
-        pass
+            raise TypeError
+
+    def __call__(self, *args):
+        aux = [element(*args) for element in self.array]
+        return Vector(aux)
 
     def _transpose_linear_system(self, other):
         return Vector((other.array.transpose()@self.array.transpose()).transpose())
@@ -322,3 +329,8 @@ class Vector(Array):
         return self.array
 
     pass
+
+
+
+
+

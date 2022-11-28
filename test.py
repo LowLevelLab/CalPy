@@ -3,6 +3,7 @@ from polynomials import Polynomial
 from differential_equations import ODE
 from functions import Function
 import pandas as pd
+from arrays import Vector
 
 # fig = plt.figure()
 # ax = fig.add_subplot(1, 1, 1)
@@ -12,7 +13,13 @@ import pandas as pd
 # ax.spines['top'].set_color('none')
 # ax.xaxis.set_ticks_position('bottom')
 # ax.yaxis.set_ticks_position('left')
-a = complex(1, 2)
-b = complex(3, 4)
-c = Polynomial([1,2,3,4])
-print(c.derivative(1),c.derivative(2))
+
+b=lambda x,y,z: x*y*z
+c = lambda x,y,z: x-y+z
+d = np.array([1,2])
+
+a = ODE([lambda x,y,z: x*y*z, lambda x,y,z: x-y+z])
+print(a.functions)
+print(type(*d))
+# print(a.functions(1,*d))
+# a.euler(y0=[0,0],n=5)
