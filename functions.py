@@ -35,9 +35,6 @@ class Function:
                 if all([len(args[0]) == len(args[i]) for i in range(len(args))]):
                     args = [np.array(element) for element in args]
                     return self.function(*args)
-                    # breakpoint()
-                    # for element in args:
-                    #     aux.append(self.function(np.array(element)))
             except TypeError:
                 raise TypeError("Invalid types")
 

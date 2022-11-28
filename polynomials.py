@@ -183,6 +183,9 @@ class Polynomial:
         else:
             return aux.derivative(n-1)
 
+    def to_function(self):
+        pass
+
 
     """
     ### ROOT-FINDING METHODS ###

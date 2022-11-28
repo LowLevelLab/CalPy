@@ -307,7 +307,11 @@ class Vector(Array):
 
     def __call__(self, *args):
         aux = [element(*args) for element in self.array]
-        return Vector(aux)
+        try:
+            len(aux[0])
+            return Matrix(aux)
+        except TypeError:
+            return Vector(aux)
 
     def _transpose_linear_system(self, other):
         return Vector((other.array.transpose()@self.array.transpose()).transpose())

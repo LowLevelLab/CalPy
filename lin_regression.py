@@ -1,6 +1,8 @@
 import numpy as np
 from typing import Union, Optional
 from abc import ABCMeta, abstractclassmethod
+from interpolation import LagrangeInterpolation
+
 
 class Regression(metaclass=ABCMeta):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
@@ -75,6 +77,8 @@ class LinRegression(Regression):
                          len(self.y) * sum(self.x**2) - sum(self.x) ** 2)
         return (m,b)
         
+    def to_function(self):
+        return lambda x: self.coeff[1] + x*self.coeff[0]
 
     
 class ExpRegression(Regression):
@@ -90,6 +94,9 @@ class ExpRegression(Regression):
         aux1 = aux.coeff_regression()
         aux = (aux1[0], np.e**(aux1[1]))
         return aux
+    
+    def to_function(self):
+        return lambda x: self.coeff[1] * np.exp(x*self.coeff[0])
 
 
 class LogRegression(Regression):
@@ -105,6 +112,9 @@ class LogRegression(Regression):
         aux1 = aux.coeff_regression()
         aux = (aux1[0], aux1[1])
         return aux
+    
+    def to_function(self):
+        return lambda x: self.coeff[1] + self.coeff[0]*np.log(x)
 
 
 class PotRegression(Regression):
@@ -122,17 +132,25 @@ class PotRegression(Regression):
         aux = (aux1[0], np.e**(aux1[1]))
         return aux
 
+    def to_function(self):
+        return lambda x: self.coeff[1]*x**self.coeff[0]
 
 
 class PolyRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
         super().__init__(xlist, ylist)
+        self.poly = LagrangeInterpolation([self.x,self.y])
+        self.coeff = []
 
     def __str__(self) -> str:
-        pass #return Polynomial
+        return self.poly.__str__()
 
     def coeff_regression(self) -> tuple:
-        pass
+        self.coeff = [element for element in self.poly]
+
+    def to_function(self):
+        return self.poly.to_function()
+
 
 class HypRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
@@ -148,6 +166,8 @@ class HypRegression(Regression):
         aux = (aux1[0], aux1[1])
         return aux
 
+    def to_function(self):
+        return lambda x: 1/(self.coeff[1] + x*self.coeff[0])
 
 
 class InvRegression(Regression):
@@ -163,6 +183,9 @@ class InvRegression(Regression):
         aux1 = aux.coeff_regression()
         aux = (aux1[0], aux1[1])
         return aux
+
+    def to_function(self):
+        return lambda x: self.coeff[1] + self.coeff[0]/x
 
 
 class LogisticRegression(Regression):
@@ -189,3 +212,6 @@ class GaussRegression(Regression):
 
     def coeff_regression(self) -> tuple:
         pass
+
+
+# def to_function(): return the function found
