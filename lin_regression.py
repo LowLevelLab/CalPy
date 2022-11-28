@@ -139,7 +139,7 @@ class PotRegression(Regression):
 class PolyRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
         super().__init__(xlist, ylist)
-        self.poly = LagrangeInterpolation([self.x,self.y])
+        self.inter = LagrangeInterpolation([self.x,self.y])
         self.coeff = []
 
     def __str__(self) -> str:
@@ -149,7 +149,7 @@ class PolyRegression(Regression):
         self.coeff = [element for element in self.poly]
 
     def to_function(self):
-        return self.poly.to_function()
+        return self.inter.poly.to_function()
 
 
 class HypRegression(Regression):

@@ -101,7 +101,7 @@ class ODE:
              df: bool = True,
              n: int = 10*c.ITERATIONS):
 
-        if bool(self._limit_check()):
+        if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
         else:
             x0 = min(self.__x_interval)
@@ -110,6 +110,16 @@ class ODE:
         aux_x = np.arange(x0, xf, step)
         y = np.array([np.zeros(n) for yk in y0]).transpose()
         y[0] = y0
+        for i in range(n-1):
+            y[i+1] = y[i] + step*self.functions(aux_x[i],*y[i])
+            y[i+1] = y[i] + (step/2)*(self.functions(aux_x[i],*y[i])+self.functions(aux_x[i+1],*y[i+1]))
+        y=y.transpose()
+        if graphic:
+            self._to_graphic(y,n)
+        if df:
+            return self.to_frame(aux_x,y)
+        else:
+            return y
         
     def rk4(self, 
             y0:Union[list,np.ndarray],
