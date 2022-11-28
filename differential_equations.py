@@ -4,6 +4,7 @@ import constants as c
 from typing import Optional, Union
 from functions import Function
 from arrays import Vector
+import pandas as pd
 
 
 
@@ -58,7 +59,7 @@ class ODE:
         y = y.transpose()
         if graphic:
             self._to_graphic(y,n)
-        return self._to_frame(y)
+        return self.to_frame(aux_x,y)
             
 
     def euler2(self,
@@ -126,8 +127,13 @@ class ODE:
         plt.show()
 
     
-    def _to_frame(self, *args):
-        pass
+    def to_frame(self,x,y):
+        d = {}
+        d['x']=x
+        for i,element in enumerate(y):
+            d[f'y{i+1}'] = element
+        df = pd.DataFrame(data=d)
+        return df
 
     
 
