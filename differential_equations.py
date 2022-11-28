@@ -36,6 +36,8 @@ class ODE:
               y0:Union[list,np.ndarray],
               x0: Optional[Union[int,float]]=None,
               xf: Optional[Union[int,float]]=None,
+              graphic: bool = False,
+
               n: int = 100*c.ITERATIONS) -> list[np.ndarray]:
 
         if bool(self._limit_check(x0,xf)):
@@ -51,7 +53,10 @@ class ODE:
         for i in range(1,n): 
             y[i] = y[i-1] + step*(self.functions(aux_x[i], *y[i-1])).array
         y = y.transpose()
-        return y
+        if not graphic:
+            return self.to_frame(y)
+        else:
+            self._to_graphic(y,n)
         
 
     def euler2(self,x0: Optional[Union[int,float]],

@@ -28,12 +28,7 @@ class Function:
         return multiplication
 
     def __call__(self, *args: Union[int,float,list,tuple,np.ndarray]):
-        if len(args) == 1 and isinstance(args[0],Union[int,float]):
-            return self.function(*args)
-        elif len(args) == 1 and not isinstance(args[0],Union[int,float]):
-            return np.array([self.function(element) for element in args[0]])
-        else:
-            return np.array([self.function(element) for element in args])
+        return np.array(self.function(*args))
 
 
     def __eq__(self, other):
