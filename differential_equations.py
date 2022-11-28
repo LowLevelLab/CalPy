@@ -41,7 +41,8 @@ class ODE:
               xf: Optional[Union[int,float]]=None,
               graphic: bool = False,
               df: bool = True,
-              n: int = 10*c.ITERATIONS):
+              n: int = 10*c.ITERATIONS,
+              decimals: int = 4):
 
         if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
@@ -59,7 +60,7 @@ class ODE:
         if graphic:
             self._to_graphic(y,n)
         if df:
-            return self.to_frame(aux_x,y)
+            return self.to_frame(aux_x,y,decimals)
         else:
             return y
             
@@ -70,7 +71,8 @@ class ODE:
                xf: Optional[Union[int,float]]=None,
                graphic: bool = False,
                df: bool = True,
-               n: int = 10*c.ITERATIONS):
+               n: int = 10*c.ITERATIONS,
+               decimals: int = 4):
 
         if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
@@ -89,7 +91,7 @@ class ODE:
         if graphic:
             self._to_graphic(y,n)
         if df:
-            return self.to_frame(aux_x,y)
+            return self.to_frame(aux_x,y,decimals)
         else:
             return y
         
@@ -99,7 +101,8 @@ class ODE:
              xf: Optional[Union[int,float]]=None,
              graphic: bool = False,
              df: bool = True,
-             n: int = 10*c.ITERATIONS):
+             n: int = 10*c.ITERATIONS,
+             decimals: int = 4):
 
         if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
@@ -117,7 +120,7 @@ class ODE:
         if graphic:
             self._to_graphic(y,n)
         if df:
-            return self.to_frame(aux_x,y)
+            return self.to_frame(aux_x,y,decimals)
         else:
             return y
 
@@ -127,7 +130,8 @@ class ODE:
                 xf: Optional[Union[int,float]]=None,
                 graphic: bool = False,
                 df: bool = True,
-                n: int = 10*c.ITERATIONS):
+                n: int = 10*c.ITERATIONS,
+                decimals: int = 4):
         
         if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
@@ -149,7 +153,7 @@ class ODE:
         if graphic:
             self._to_graphic(y,n)
         if df:
-            return self.to_frame(aux_x,y)
+            return self.to_frame(aux_x,y,decimals)
         else:
             return y
         
@@ -159,7 +163,8 @@ class ODE:
             xf: Optional[Union[int,float]]=None,
             graphic: bool = False,
             df: bool = True,
-            n: int = 10*c.ITERATIONS):
+            n: int = 10*c.ITERATIONS,
+            decimals: int = 4):
 
         if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
@@ -181,7 +186,7 @@ class ODE:
         if graphic:
             self._to_graphic(y,n)
         if df:
-            return self.to_frame(aux_x,y)
+            return self.to_frame(aux_x,y, decimals)
         else:
             return y
 
@@ -215,9 +220,9 @@ class ODE:
         plt.show()
 
     
-    def to_frame(self,x,y):
+    def to_frame(self, x:np.ndarray, y:np.ndarray, decimals: int = 4) -> pd.core.frame.DataFrame:
         d = {}
-        d['x']=x
+        d['x']=x.round(decimals)
         for i,element in enumerate(y):
             d[f'y{i+1}'] = element
         df = pd.DataFrame(data=d)
