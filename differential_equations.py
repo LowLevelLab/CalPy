@@ -133,6 +133,7 @@ class ODE:
         for i,element in enumerate(y):
             d[f'y{i+1}'] = element
         df = pd.DataFrame(data=d)
+        df.set_index('x',inplace=True)
         return df
 
     
