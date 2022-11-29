@@ -58,7 +58,7 @@ class ODE:
             y[i] = y[i-1] + step*(self.functions(aux_x[i], *y[i-1])).array
         y = y.transpose()
         if graphic:
-            self._to_graphic(y,n)
+            self.to_graphic(y=y,n=n)
         if df:
             return self.to_frame(aux_x,y,decimals)
         else:
@@ -89,7 +89,7 @@ class ODE:
         y[-1] = aux_y[-1]
         y = y.transpose()
         if graphic:
-            self._to_graphic(y,n)
+            self.to_graphic(y=y,n=n)
         if df:
             return self.to_frame(aux_x,y,decimals)
         else:
@@ -118,7 +118,7 @@ class ODE:
             y[i+1] = y[i] + (step/2)*(self.functions(aux_x[i],*y[i])+self.functions(aux_x[i+1],*y[i+1]))
         y=y.transpose()
         if graphic:
-            self._to_graphic(y,n)
+            self.to_graphic(y=y,n=n)
         if df:
             return self.to_frame(aux_x,y,decimals)
         else:
@@ -151,7 +151,7 @@ class ODE:
             y[i+1] = y[i] + (step/4)*(k1[i]+(3/2)*(k2[i]+k3[i]))
         y=y.transpose()
         if graphic:
-            self._to_graphic(y,n)
+            self.to_graphic(y=y,n=n)
         if df:
             return self.to_frame(aux_x,y,decimals)
         else:
@@ -184,13 +184,28 @@ class ODE:
             y[i+1] = y[i] + (k1[i] + 2 * (k2[i] + k3[i]) + k4[i]) / 6
         y=y.transpose()
         if graphic:
-            self._to_graphic(y,n)
+            self.to_graphic(y=y,n=n)
         if df:
             return self.to_frame(aux_x,y, decimals)
         else:
             return y
 
-    def pvc(self, 
+    def adams(self):
+        pass
+
+    def adams_moulton(self):
+        pass
+
+    def adams3(self):
+        pass
+
+    def adams4(self):
+        pass
+
+    def shooting(self):
+        pass
+
+    def finite_diff(self, 
             x0: Union[int,float], 
             xf: Union[int,float], 
             y0: list[Union[int,float]], 
@@ -202,21 +217,35 @@ class ODE:
             pass
         
 
-    def _to_graphic(self,
-                    y: list,
-                    n: int,
+    def to_graphic(self,
+                    data = None,
+                    y: list = None,
+                    n: int = 10*c.ITERATIONS,
+                    decimals: int = 4,
                     title: str = 'graphics',
                     x_axis:str='x axis',
                     y_axis: str = 'y axis',
-                    color: str = 'r')-> None:
+                    color: Optional[str] = None,
+                    label:Optional[list] = None,
+                    legend_loc: Optional[str] = None)-> None:
 
-        x = np.arange(self.x_interval[0],self.x_interval[1],(self.x_interval[1]-self.x_interval[0])/n)
         l = []
+        x = np.arange(self.x_interval[0],self.x_interval[1],(self.x_interval[1]-self.x_interval[0])/n)
         xl = plt.xlabel(x_axis)
         yl = plt.ylabel(y_axis)
         ttl = plt.title(title)
-        for yk in y:
-            l.append(plt.plot(x,yk,color))
+        color_list = ['r','b','k','g','y','c']
+        if y is None:
+            pass
+        if color is None:
+            color = color_list
+        if label is None:
+            label = [f'y{i+1}' for i in range(len(y))]
+        if legend_loc is None:
+            legend_loc = 'upper right'
+        for i,yk in enumerate(y):
+            l.append(plt.plot(x,yk,color[i], label=label[i]))
+        ll = plt.legend(loc= legend_loc)
         plt.show()
 
     

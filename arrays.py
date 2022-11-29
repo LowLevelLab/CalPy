@@ -3,6 +3,7 @@ from error_types import DimensionError
 from typing import Union
 import pandas as pd
 from complex import Complex
+import scipy as sc
 
 
 class Array:
@@ -67,25 +68,14 @@ class Array:
             else:
                 return Matrix(self.array - other.array)
 
-    def __radd__(self, other):
-        return self.__add__(other)
-
     def __iadd__(self,other):
         return self.__add__(other)
 
-    def __rsub__(self, other):
-        aux = self.__sub__(other)
-        aux.array = - aux.array
-        return aux
-
     def __isub__(self,other):
         return self.__sub__(other)
-        
-    def __rmul__(self, other):
-        pass
-
+    
     def __getitem__(self, item):
-        return self.array[item]
+        return Vector(self.array[item])
 
     def __setitem__(self, key, value):
         self.array[key] = value
@@ -95,6 +85,10 @@ class Array:
 
     def __call__(self, *args):
         pass
+
+    def __neg__(self):
+        pass
+
 
 # MODIFY __str__ : DATAFRAME
 
@@ -119,11 +113,15 @@ class Matrix(Array):
         else:
             raise TypeError
 
+    def __rmul__(self, other):
+        if isinstance(other, Union[int,float,Complex]):
+            return self.__mul__(other)
+
+    def __imul__(self,other):
+        return self.__mul__(other)
+
     '''
     def __pow__()
-    def__rmul__
-    def__imul__
-    def__abs__
     def__neg__
     '''   
 
@@ -139,42 +137,18 @@ class Matrix(Array):
     def _linear_system(self, other):
         return Vector(self.array @ other.array)
 
-    def is_a_square_matrix(self):
-        pass
-
-    def determinant(self):
-        self.is_square_matrix()
-        row_number = len(self.array)
-        for i in range(row_number):
-            if self[i][i] != 0:
-                pivot = self[i][i]
-            else:
-                for j in range(i + 1, row_number):
-                    if self != 0:
-                        ans = self[i]
-                        self[i] = -self[j]
-                        self[j] = ans
-                        pivot = self[i][i]
-                        break
-
-            for j in range(i + 1, row_number):
-                if self[j][i] == 1:
-                    continue
-                else:
-                    self[j] = self[j] * pivot - self[j][i] * self[i]
-
-        return self.array[row_number - 1][row_number - 1]
-
+    def determinant(self): ### !!!!!! ###
+        return np.linalg.det(self.array)
+    
     def find_row(self, row: list):
-        if len(self[0]) != len(row):
-            raise DimensionError('incompatible dimensions')
-        for i in range(len(self)):
-            if self[i] == row:
-                return i
-        raise Exception('line not found')
+        for i, element in enumerate(self.array):
+            if row == element:
+                return i 
+        return -1
 
-    def findColumn(self):
-        pass
+    def findColumn(self, column:list):
+        aux = Matrix(self.transpose())
+        return column in aux.find_row(column)
 
     def transpose(self):
         return Matrix(self.array.transpose())
@@ -312,6 +286,9 @@ class Vector(Array):
         else:
             return Vector(aux)
 
+    def __abs__(self):
+        pass
+
     def _transpose_linear_system(self, other):
         return Vector((other.array.transpose()@self.array.transpose()).transpose())
 
@@ -332,8 +309,5 @@ class Vector(Array):
         return self.array
 
     pass
-
-
-
 
 
