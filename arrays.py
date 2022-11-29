@@ -154,10 +154,14 @@ class Matrix(Array):
         return Matrix(self.array.transpose())
 
     def invert(self): 
-        pass
+        aux = np.linalg.inv(self.array)
+        return Matrix(aux)
 
     def append(self,vector):
-        pass
+        if isinstance(vector, Union[Vector,list,np.ndarray]):
+            pass
+        else:
+            raise TypeError(f"Invalid type: {type(vector)}")
 
     def to_list(self) -> list:
         pass

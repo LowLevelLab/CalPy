@@ -322,5 +322,50 @@ class Function:
 
 
 class MVFunction:
-    pass
+    def __init__(self) -> None:
+        pass
+
+    @property
+    def function(self):
+        pass
+
+    def __call__(self, *args):
+        pass
+
+    ### BASIC METHODS ###
+
+    def derivative(self, n:int = 1):
+        pass
+    
+    ### ROOT ###
+
+
+    def newton_raphson(self):
+        pass
+
+    def bisection(self):
+        pass
+
+    def false_position(self):
+        pass
+    
+    ### INTEGRAL ###
+
+
+    def simpson13(self):
+        pass
+
+    def rectangle(self):
+        pass
+
+    def romberg(self):
+        pass
+
+    def trapeze(self):
+        pass
+
+    ### OTHERS ###
+
+    def plot_function(self):
+        pass
 
