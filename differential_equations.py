@@ -12,7 +12,8 @@ class ODE:
     def __init__(self,
                  functions: Union[list,np.ndarray],
                  x: Optional[Union[list,np.ndarray]]= None,
-                 iterations: int = 10*c.ITERATIONS) -> None:
+                 iterations: int = 10*c.ITERATIONS,
+                 decimals: int = 4) -> None:
 
         if isinstance(x, Union[list,np.ndarray]):
             self.__x_interval = np.array(x)
@@ -23,6 +24,7 @@ class ODE:
             functions = l
         self.__functions = Vector(functions)
         self.__n = iterations
+        self.__decimals = decimals
 
     @property
     def functions(self):
@@ -47,6 +49,21 @@ class ODE:
         else:
             raise KeyError
 
+    @property    
+    def decimals(self):
+        return self.__decimals
+
+    @decimals.setter
+    def decimals(self, arg):
+        if isinstance(arg, int) and arg > 0:
+            self.__decimals = arg
+        elif isinstance(arg, int) and arg <= 0:
+            raise ValueError
+        elif not isinstance(arg, int):
+            raise TypeError
+        else:
+            raise KeyError
+
     def _limit_check(self, x0: Optional[Union[int,float]], xf: Optional[Union[int,float]]) -> int:
         if x0 is None and xf is None:
             return 0
@@ -60,8 +77,7 @@ class ODE:
               x0: Optional[Union[int,float]]=None,
               xf: Optional[Union[int,float]]=None,
               graphic: bool = False,
-              df: bool = True,
-              decimals: int = 4):
+              df: bool = True):
 
         if bool(self._limit_check(x0,xf)):            
             if self.x_interval is None:
@@ -70,7 +86,7 @@ class ODE:
             x0 = min(self.__x_interval)
             xf = max(self.__x_interval)
         step = (xf-x0)/self.n
-        y = np.array([np.zeros(self.n) for yk in y0]).transpose()
+        y = np.zeros((len(y0),self.n)).transpose()
         y[0] = y0
         aux_x = np.arange(x0, xf, step)
         for i in range(1,self.n): 
@@ -79,7 +95,7 @@ class ODE:
         if graphic:
             self.to_graphic(y=y)
         if df:
-            return self.to_frame(aux_x,y,decimals)
+            return self.to_frame(aux_x,y)
         else:
             return y
             
@@ -89,8 +105,7 @@ class ODE:
                x0: Optional[Union[int,float]]=None,
                xf: Optional[Union[int,float]]=None,
                graphic: bool = False,
-               df: bool = True,
-               decimals: int = 4):
+               df: bool = True):
 
         
         if bool(self._limit_check(x0,xf)):            
@@ -102,7 +117,7 @@ class ODE:
         step = (xf-x0)/self.n
         aux_x = np.arange(x0, xf, step)
         aux_y = self.euler(y0,x0,xf,df=False).transpose()
-        y = np.array([np.zeros(self.n) for yk in y0]).transpose()
+        y = np.zeros((len(y0),self.n)).transpose()
         y[0] = y0
         for i in range(1,self.n-1): 
             y[i] = y[i-1] + step*((aux_y[i]-aux_y[i-1])/step+(aux_y[i+1]-aux_y[i])/step)/2
@@ -111,7 +126,7 @@ class ODE:
         if graphic:
             self.to_graphic(y=y)
         if df:
-            return self.to_frame(aux_x,y,decimals)
+            return self.to_frame(aux_x,y)
         else:
             return y
         
@@ -120,8 +135,7 @@ class ODE:
              x0: Optional[Union[int,float]]=None,
              xf: Optional[Union[int,float]]=None,
              graphic: bool = False,
-             df: bool = True,
-             decimals: int = 4):
+             df: bool = True):
 
         
         if bool(self._limit_check(x0,xf)):            
@@ -132,7 +146,7 @@ class ODE:
             xf = max(self.__x_interval)
         step = (xf-x0)/self.n
         aux_x = np.arange(x0, xf, step)
-        y = np.array([np.zeros(self.n) for yk in y0]).transpose()
+        y = np.zeros((len(y0),self.n)).transpose()
         y[0] = y0
         for i in range(self.n-1):
             y[i+1] = y[i] + step*self.functions(aux_x[i],*y[i])
@@ -141,7 +155,7 @@ class ODE:
         if graphic:
             self.to_graphic(y=y)
         if df:
-            return self.to_frame(aux_x,y,decimals)
+            return self.to_frame(aux_x,y)
         else:
             return y
 
@@ -150,8 +164,7 @@ class ODE:
                 x0: Optional[Union[int,float]]=None,
                 xf: Optional[Union[int,float]]=None,
                 graphic: bool = False,
-                df: bool = True,
-                decimals: int = 4):
+                df: bool = True):
         
         
         if bool(self._limit_check(x0,xf)):            
@@ -162,7 +175,7 @@ class ODE:
             xf = max(self.__x_interval)
         step = (xf-x0)/self.n
         aux_x = np.arange(x0, xf, step)
-        y = np.array([np.zeros(self.n) for yk in y0]).transpose()
+        y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3 = y.copy(),y.copy(),y.copy()
         y[0] = y0
 
@@ -175,7 +188,7 @@ class ODE:
         if graphic:
             self.to_graphic(y=y)
         if df:
-            return self.to_frame(aux_x,y,decimals)
+            return self.to_frame(aux_x,y)
         else:
             return y
         
@@ -184,8 +197,7 @@ class ODE:
             x0: Optional[Union[int,float]]=None,
             xf: Optional[Union[int,float]]=None,
             graphic: bool = False,
-            df: bool = True,
-            decimals: int = 4):
+            df: bool = True):
 
         
         if bool(self._limit_check(x0,xf)):            
@@ -196,7 +208,7 @@ class ODE:
             xf = max(self.__x_interval)
         step = (xf-x0)/self.n
         aux_x = np.arange(x0, xf, step)
-        y = np.array([np.zeros(self.n) for yk in y0]).transpose()
+        y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
         y[0] = y0
         for i in range(self.n-1):
@@ -209,24 +221,109 @@ class ODE:
         if graphic:
             self.to_graphic(y=y)
         if df:
-            return self.to_frame(aux_x,y, decimals)
+            return self.to_frame(aux_x,y)
         else:
             return y
 
-    def adams(self):
-        pass
+    def adams_bashforth(self,
+                        y0:Union[list,np.ndarray],
+                        x0: Optional[Union[int,float]]=None,
+                        xf: Optional[Union[int,float]]=None,
+                        graphic: bool = False,
+                        df: bool = True):
+        
+        
+        if bool(self._limit_check(x0,xf)):            
+            if self.x_interval is None:
+                self.x_interval = np.array([x0,xf])
+        else:
+            x0 = min(self.__x_interval)
+            xf = max(self.__x_interval)
+        step = (xf-x0)/self.n
+        aux_x = np.arange(x0, xf, step)
+        y = np.zeros((len(y0),self.n)).transpose()
+        k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
+        y[0] = y0
 
-    def adams_moulton(self):
-        pass
+    def adams_moulton(self,
+              y0:Union[list,np.ndarray],
+              x0: Optional[Union[int,float]]=None,
+              xf: Optional[Union[int,float]]=None,
+              graphic: bool = False,
+              df: bool = True):
+        
+        
+        if bool(self._limit_check(x0,xf)):            
+            if self.x_interval is None:
+                self.x_interval = np.array([x0,xf])
+        else:
+            x0 = min(self.__x_interval)
+            xf = max(self.__x_interval)
+        step = (xf-x0)/self.n
+        aux_x = np.arange(x0, xf, step)
+        y = np.zeros((len(y0),self.n)).transpose()
+        k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
+        y[0] = y0
 
-    def adams3(self):
-        pass
+    def adams3(self,
+               y0:Union[list,np.ndarray],
+               x0: Optional[Union[int,float]]=None,
+               xf: Optional[Union[int,float]]=None,
+               graphic: bool = False,
+               df: bool = True):
+        
+        
+        if bool(self._limit_check(x0,xf)):            
+            if self.x_interval is None:
+                self.x_interval = np.array([x0,xf])
+        else:
+            x0 = min(self.__x_interval)
+            xf = max(self.__x_interval)
+        step = (xf-x0)/self.n
+        aux_x = np.arange(x0, xf, step)
+        y = np.zeros((len(y0),self.n)).transpose()
+        k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
+        y[0] = y0
 
-    def adams4(self):
-        pass
+    def adams4(self,
+               y0:Union[list,np.ndarray],
+               x0: Optional[Union[int,float]]=None,
+               xf: Optional[Union[int,float]]=None,
+               graphic: bool = False,
+               df: bool = True):
+        
+        
+        if bool(self._limit_check(x0,xf)):            
+            if self.x_interval is None:
+                self.x_interval = np.array([x0,xf])
+        else:
+            x0 = min(self.__x_interval)
+            xf = max(self.__x_interval)
+        step = (xf-x0)/self.n
+        aux_x = np.arange(x0, xf, step)
+        y = np.zeros((len(y0),self.n)).transpose()
+        k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
+        y[0] = y0
 
-    def shooting(self):
-        pass
+    def shooting(self,
+                 y0:Union[list,np.ndarray],
+                 x0: Optional[Union[int,float]]=None,
+                 xf: Optional[Union[int,float]]=None,
+                 graphic: bool = False,
+                 df: bool = True):
+        
+        
+        if bool(self._limit_check(x0,xf)):            
+            if self.x_interval is None:
+                self.x_interval = np.array([x0,xf])
+        else:
+            x0 = min(self.__x_interval)
+            xf = max(self.__x_interval)
+        step = (xf-x0)/self.n
+        aux_x = np.arange(x0, xf, step)
+        y = np.zeros((len(y0),self.n)).transpose()
+        k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
+        y[0] = y0
 
     def bvp(self, 
             y0: list[Union[int,float]], 
@@ -243,7 +340,6 @@ class ODE:
     def to_graphic(self,
                     data = None,
                     y: list = None,
-                    decimals: int = 4,
                     title: str = 'graphics',
                     x_axis:str='x axis',
                     y_axis: str = 'y axis',
@@ -271,26 +367,26 @@ class ODE:
         plt.show()
 
     
-    def to_frame(self, x:np.ndarray, y:np.ndarray, decimals: int = 4) -> pd.core.frame.DataFrame:
+    def to_frame(self, x:np.ndarray, y:np.ndarray) -> pd.core.frame.DataFrame:
         d = {}
-        d['x']=x.round(decimals)
+        d['x']=x.round(self.decimals)
         for i,element in enumerate(y):
             d[f'y{i+1}'] = element
         df = pd.DataFrame(data=d)
         df.set_index('x',inplace=True)
         return df
 
-    def error(self, functions: list, y:np.ndarray, n:int = 10*c.ITERATIONS, type: str = 'abs', decimals: int = 4):
+    def error(self, functions: list, y:np.ndarray, n:int = 10*c.ITERATIONS, type: str = 'abs'):
         x = np.arange(self.x_interval[0],self.x_interval[1],(self.x_interval[1]-self.x_interval[0])/n)
         y_ideal = [element(x) for element in functions]
         abs_err = y_ideal - y
         rel_err = abs_err/y_ideal
         if type == 'abs':
-            return [max(element).round(decimals) for element in abs_err]
+            return [max(element).round(self.decimals) for element in abs_err]
         elif type == 'rel':
-            return [max(element).round(decimals) for element in rel_err]
+            return [max(element).round(self.decimals) for element in rel_err]
         elif type == 'percent':
-            return [100*max(element).round(decimals) for element in rel_err]
+            return [100*max(element).round(self.decimals) for element in rel_err]
         else: 
             raise ValueError(f'Invalid argument: {type}. It must be either \'abs\', \'rel\' or \'percent\'')
         
