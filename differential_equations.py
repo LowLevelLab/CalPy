@@ -13,7 +13,7 @@ class ODE:
         if isinstance(x, Union[list,np.ndarray]):
             self.__x_interval = np.array(x)
         else:
-            self.__x_interval = np.array([0,1])
+            self.__x_interval = None
         if not isinstance(functions, list):
             l = [functions]
             functions = l
@@ -46,6 +46,8 @@ class ODE:
 
         if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
+            if self.x_interval is None:
+                self.x_interval = np.array([x0,xf])
         else:
             x0 = min(self.__x_interval)
             xf = max(self.__x_interval)
@@ -76,6 +78,8 @@ class ODE:
 
         if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
+            if self.x_interval is None:
+                self.x_interval = np.array([x0,xf])            
         else:
             x0 = min(self.__x_interval)
             xf = max(self.__x_interval)
@@ -106,6 +110,8 @@ class ODE:
 
         if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
+            if self.x_interval is None:
+                self.x_interval = np.array([x0,xf])
         else:
             x0 = min(self.__x_interval)
             xf = max(self.__x_interval)
@@ -135,6 +141,8 @@ class ODE:
         
         if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
+            if self.x_interval is None:
+                self.x_interval = np.array([x0,xf])
         else:
             x0 = min(self.__x_interval)
             xf = max(self.__x_interval)
@@ -168,6 +176,8 @@ class ODE:
 
         if bool(self._limit_check(x0,xf)):
             step = (xf-x0)/n
+            if self.x_interval is None:
+                self.x_interval = np.array([x0,xf])
         else:
             x0 = min(self.__x_interval)
             xf = max(self.__x_interval)
@@ -258,8 +268,21 @@ class ODE:
         df.set_index('x',inplace=True)
         return df
 
+    def error(self, functions: list, y:np.ndarray, n:int = 10*c.ITERATIONS, type: str = 'abs', decimals: int = 4):
+        x = np.arange(self.x_interval[0],self.x_interval[1],(self.x_interval[1]-self.x_interval[0])/n)
+        y_ideal = [element(x) for element in functions]
+        abs_err = y_ideal - y
+        rel_err = abs_err/y_ideal
+        if type == 'abs':
+            return [max(element).round(decimals) for element in abs_err]
+        elif type == 'rel':
+            return [max(element).round(decimals) for element in rel_err]
+        elif type == 'percent':
+            return [100*max(element).round(decimals) for element in rel_err]
+        else: 
+            raise ValueError(f'Invalid argument: {type}. It must be either \'abs\', \'rel\' or \'percent\'')
+        
 
-# NYSTROM
 
 class PDE:
     pass
