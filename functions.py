@@ -167,6 +167,10 @@ class Function:
             x = x1
         return x
 
+    def steffensen(self) -> Union[float,int]:
+        g = lambda x: self(x+self(x))/self(x) - 1
+        pass
+
     """
     ### INTEGRAL OF THE FUNCTION ###
     """
@@ -269,24 +273,31 @@ class Function:
                       y_axis: str = 'y axis',
                       title: str = 'function',
                       color: str = 'r',
-                      label: Optional[str] = None,
-                      local_legend: Optional[str] = None) -> None:
-        if label is not None:
-            l_def = label
-        else:
-            l_def = 'f(x)'
+                      label: str = 'f(x)',
+                      local_legend: str = 'upper right') -> None:
+        
         y = [self.function(xk) for xk in x]
         xl = plt.xlabel(x_axis)
         yl = plt.ylabel(y_axis)
         ttl = plt.title(title)
-        la = plt.plot(x, y, color, label=l_def)
+        la = plt.plot(x, y, color, label=label)
         if local_legend is not None:
             ll=plt.legend(loc = local_legend)
         plt.show()
 
-    """
-    def steffensen
 
+    """
+    ### TRANSFORMS ###
+    """
+
+
+    def laplace(self):
+        pass
+
+    def fourier(self):
+        pass
+
+    """
     def steffesen(f, x0, tol, maxIter):
 
     def g(x):
@@ -307,12 +318,7 @@ class Function:
     # print(y_k);    
 
     return x_k[-1];
-
-
-
-    def laplace_transform
-    def fourier_transform
-    """
+"""
 
 
 class MVFunction:

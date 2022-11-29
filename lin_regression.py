@@ -44,8 +44,6 @@ class Regression(metaclass=ABCMeta):
             'pol' : PolyRegression(self.x, self.y),
             'pot' : PotRegression(self.x, self.y),
             'inv' : InvRegression(self.x, self.y),
-            'lgt' : LogisticRegression(self.x,self.y),
-            'gss' : GaussRegression(self.x,self.y),
             'opt' : 0
         }
         return possibilities[kind]
@@ -54,7 +52,7 @@ class Regression(metaclass=ABCMeta):
     def S_factor(self) -> float:
         pass
 
-    @abstractclassmethod
+    # @abstractclassmethod
     def coeff_regression(self) -> tuple:
         return (0,0)
 
@@ -139,15 +137,14 @@ class PotRegression(Regression):
 class PolyRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
         super().__init__(xlist, ylist)
-        self.inter = LagrangeInterpolation([self.x,self.y])
-        self.coeff = []
+        self.inter = LagrangeInterpolation(self.x,self.y)
 
     def __str__(self) -> str:
-        return self.poly.__str__()
+        return self.inter.poly.__str__()
 
     def coeff_regression(self) -> tuple:
-        self.coeff = [element for element in self.poly]
-
+        self.coeff = [element for element in range(2)] 
+    """self.inter.poly"""
     def to_function(self):
         return self.inter.poly.to_function()
 
@@ -187,7 +184,7 @@ class InvRegression(Regression):
     def to_function(self):
         return lambda x: self.coeff[1] + self.coeff[0]/x
 
-
+"""
 class LogisticRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray], lim: Optional[Union[float,int]]=1) -> None:
         super().__init__(xlist, ylist)
@@ -212,3 +209,4 @@ class GaussRegression(Regression):
 
     def coeff_regression(self) -> tuple:
         pass
+"""

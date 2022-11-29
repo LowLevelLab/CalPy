@@ -12,7 +12,7 @@ class Interpolation:
             y.sort()
             self.y_interval = np.array(y)
         else:
-            self.y_interval = f(self.x)    
+            self.y_interval = f(self.x_interval)    
 
 
 
@@ -52,7 +52,7 @@ class LagrangeInterpolation(Interpolation):
         for i in range(len(self.x_interval)):
             if i == k:
                 continue
-            aux = aux*Polynomial([-self.x_interval[i]/(self.x_interval[k]-self.x_interval[i]),
+            aux *=Polynomial([(-self.x_interval[i])/(self.x_interval[k]-self.x_interval[i]),
                                    1/(self.x_interval[k]-self.x_interval[i])])
         return aux
 
