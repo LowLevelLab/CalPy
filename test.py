@@ -1,11 +1,8 @@
-from differential_equations import ODE
+from complex import Quaternion
 
-y1 = lambda x,y,z : 0.1*y -0.1*y*z
-y2 = lambda x,y,z : 0.02*y*z-0.1*z  
-y = ODE([y1,y2],[0,365], iterations=500)
-data = y.euler([3,1])
-print(data)
+a = Quaternion(1,1,2,3)
+b = Quaternion(1,1,2,3)
 
-
+print(-a)
 
 

@@ -122,6 +122,8 @@ class Matrix(Array):
         return self.__mul__(other)
 
     def __pow__(self, index):
+        if not isinstance(index,int):
+            raise TypeError
         if index == 0:
             if len(self) == len(self[0]):
                 return Matrix(np.identity(len(self)))
@@ -344,7 +346,3 @@ class Vector(Array):
 
     def to_nparray(self) -> np.ndarray:
         return self.array
-
-
-a = Matrix([[1,2],[1,3]])
-print(a.find_column([1,1]))
