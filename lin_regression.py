@@ -49,7 +49,7 @@ class Regression(metaclass=ABCMeta):
         return possibilities[kind]
 
     # @abstractclassmethod
-    def S_factor(self) -> float:
+    def square_residue(self) -> float:
         pass
 
     # @abstractclassmethod

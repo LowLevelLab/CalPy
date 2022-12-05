@@ -4,6 +4,7 @@ from typing import Union
 import pandas as pd
 from complex import Complex
 import scipy as sc
+import constants as c
 
 
 class Array:
@@ -114,16 +115,21 @@ class Matrix(Array):
             raise TypeError
 
     def __rmul__(self, other):
-        if isinstance(other, Union[int,float,Complex]):
+        if isinstance(other, Union[int,float,Complex, complex]):
             return self.__mul__(other)
 
     def __imul__(self,other):
         return self.__mul__(other)
 
-    '''
-    def __pow__()
-    def__neg__
-    '''   
+    def __pow__(self, index):
+        if index == 0:
+            if len(self) == len(self[0]):
+                return Matrix(np.identity(len(self)))
+            else:
+                raise DimensionError()
+        elif index == 1:
+            return self
+        return self*self.__pow__(index-1)
 
 
     """
@@ -142,13 +148,13 @@ class Matrix(Array):
     
     def find_row(self, row: list):
         for i, element in enumerate(self.array):
-            if row == element:
+            if all(row[j]==element[j] for j in range(len(row))):
                 return i 
         return -1
 
-    def findColumn(self, column:list):
+    def find_column(self, column:list):
         aux = Matrix(self.transpose())
-        return column in aux.find_row(column)
+        return aux.find_row(column)
 
     def transpose(self):
         return Matrix(self.array.transpose())
@@ -157,17 +163,23 @@ class Matrix(Array):
         aux = np.linalg.inv(self.array)
         return Matrix(aux)
 
-    def append(self,vector):
-        if isinstance(vector, Union[Vector,list,np.ndarray]):
-            pass
-        else:
-            raise TypeError(f"Invalid type: {type(vector)}")
-
+    def append(self,*args) -> None:
+        for element in args:
+            if not isinstance(element, Union[Vector,list,np.ndarray]):
+                raise TypeError(f"Invalid type: {type(element)}")
+            elif len(element) != len(self[0]):
+                raise DimensionError()
+        original_size = len(self)
+        final_size = len(self.array) + len(args)
+        self.array.resize((final_size,len(self[0])), refcheck=False)
+        for i, element in enumerate(args):
+            self.array[original_size+i] = np.array(element)
+        
     def to_list(self) -> list:
-        pass
+        return self.array.tolist()
 
     def to_frame(self) -> pd.core.frame.DataFrame:
-        pass
+        return pd.DataFrame(data=self.array)
 
     def to_nparray(self) -> np.ndarray:
         return self.array
@@ -251,10 +263,25 @@ class Matrix(Array):
         pass
 
     def LR_decomposition(self):
-        pass
+        n = self.array.shape[0]
+        r = np.copy(self.array)
+        l = np.identity(n) 
+        rt = r.transpose()
 
-    def LR_method(self):
-        pass
+        for j in range(n-1):
+            for i in range(j+1,n):
+                m = r[i, j]/r[j, j]
+                r[i, j:] -= m * r[j, j:]
+                l[i, j] = m
+        return l, r
+
+    def LR_method(self, iter=c.ITERATIONS):        
+        Ak = np.copy(self.array)
+        for k in range(iter):
+            L, R = self.LR_decomposition(Ak)
+            Ak = R@L
+        eigenvalues = np.diag(Ak)
+        return eigenvalues
 
     def householder(self):
         pass
@@ -291,7 +318,7 @@ class Vector(Array):
             return Vector(aux)
 
     def __abs__(self):
-        pass
+        return np.sum(self.array**2)
 
     def _transpose_linear_system(self, other):
         return Vector((other.array.transpose()@self.array.transpose()).transpose())
@@ -299,7 +326,13 @@ class Vector(Array):
     def _dot_product(self, other):
         return Vector(np.dot(self, other))
 
+    def cross_product(self,other):
+        pass
+
     def append(self, *args) -> None:
+        for element in args:
+            if not isinstance(element, Union[float,int,complex,Complex]):
+                raise DimensionError
         original_size = len(self)
         final_size = len(self.array) + len(args)
         self.array.resize(final_size, refcheck=False)
@@ -307,11 +340,11 @@ class Vector(Array):
             self.array[original_size+i] = args[i]
 
     def to_list(self) -> list:
-        return list(self)
+        return self.array.tolist()
 
     def to_nparray(self) -> np.ndarray:
         return self.array
 
-    pass
 
-
+a = Matrix([[1,2],[1,3]])
+print(a.find_column([1,1]))
