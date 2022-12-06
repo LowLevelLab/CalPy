@@ -5,6 +5,8 @@ import scipy.special as scp
 import matplotlib.pyplot as plt
 from typing import Optional, Union
 import pandas as pd
+from interpolation import LagrangeInterpolation
+from transforms import *
 
 
 class Function:
@@ -16,15 +18,15 @@ class Function:
         return self.__function
 
     def __add__(self, other):
-        addition = Function(self.function + other.function)
+        addition = Function(lambda x: self.function(x) + other.function(x))
         return addition
 
     def __sub__(self, other):
-        subtraction = Function(self.function - other.function)
+        subtraction = Function(lambda x: self.function(x) - other.function(x))
         return subtraction
 
     def __mul__(self, other):
-        multiplication = Function(self.function * other.function)
+        multiplication = Function(lambda x: self.function(x) * other.function(x))
         return multiplication
 
     def __call__(self, *args: Union[int,float,list,tuple,np.ndarray]):
@@ -47,7 +49,7 @@ class Function:
         pass
 
     def __truediv__(self, other):
-        division = Function(self.function / other.function)
+        division = Function(lambda x: self.function(x) / other.function(x))
         return division
 
     def __abs__(self):
@@ -258,10 +260,12 @@ class Function:
     # TAYLOR SERIES
 
     def taylor_series(self, order: int, x0: Union[float,int]) -> Polynomial:
-        l = []
+        l = Function(lambda x: 0)
         for i in range(order):
-            l.append(self.nth_derivative(x0,i)*x0**i/scp.factorial(i))
-        return Polynomial(l)
+            l+=(Function(lambda x: self.nth_derivative(x0,i)*x**i/scp.factorial(i)))
+        aux = LagrangeInterpolation([x0-1,x0+1],f= l)
+        return aux
+        
 
 
     """
@@ -291,11 +295,17 @@ class Function:
     """
 
 
-    def laplace(self):
-        pass
+    def laplace(self, real: bool = True):
+        if real:
+            return Laplace(self.function)
+        else:
+            return self.complex_laplace()
 
     def fourier(self):
-        pass
+        return Fourier(self.function)
+
+    def complex_laplace(self):
+        return ComplexLaplace(self.function)
 
     """
     def steffesen(f, x0, tol, maxIter):

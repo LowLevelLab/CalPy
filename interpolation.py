@@ -20,6 +20,9 @@ class NewtonInterpolation(Interpolation):
     def __init__(self, x: Union[list,np.ndarray], y: Optional[Union[list,np.ndarray]] = None, f = lambda x: x) -> None:
         super().__init__(x,y,f)
         self.__poly = self._interpolate()
+
+    def __str__(self) -> str:
+        return self.poly.__str__()
     
     def diff_div(self,i: int,k: int) -> Union[int,float]:
         if i == k:
@@ -46,6 +49,8 @@ class LagrangeInterpolation(Interpolation):
         super().__init__(x,y,f)
         self.__poly = self._interpolate()
 
+    def __str__(self) -> str:
+        return self.poly.__str__()
 
     def _Lk(self, k:int) -> Polynomial:
         aux = Polynomial([1])

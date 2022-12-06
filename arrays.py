@@ -145,16 +145,16 @@ class Matrix(Array):
     def _linear_system(self, other):
         return Vector(self.array @ other.array)
 
-    def determinant(self): ### !!!!!! ###
+    def determinant(self) -> float: ### !!!!!! ###
         return np.linalg.det(self.array)
     
-    def find_row(self, row: list):
+    def find_row(self, row: list) -> int:
         for i, element in enumerate(self.array):
             if all(row[j]==element[j] for j in range(len(row))):
                 return i 
         return -1
 
-    def find_column(self, column:list):
+    def find_column(self, column:list) -> int:
         aux = Matrix(self.transpose())
         return aux.find_row(column)
 
@@ -165,17 +165,34 @@ class Matrix(Array):
         aux = np.linalg.inv(self.array)
         return Matrix(aux)
 
-    def append(self,*args) -> None:
+    def append(self,*args: Union[list,np.ndarray], axis: int=0) -> None:
+        if axis == 0:
+            return self._below_append(*args)
+        elif axis == 1:
+            return self._right_append(*args)
+        else:
+            raise ValueError
+
+    def _below_append(self,*args: Union[list,np.ndarray]):
         for element in args:
             if not isinstance(element, Union[Vector,list,np.ndarray]):
                 raise TypeError(f"Invalid type: {type(element)}")
             elif len(element) != len(self[0]):
-                raise DimensionError()
+                raise DimensionError
         original_size = len(self)
         final_size = len(self.array) + len(args)
+        print(self)
         self.array.resize((final_size,len(self[0])), refcheck=False)
+        print(self)
         for i, element in enumerate(args):
             self.array[original_size+i] = np.array(element)
+
+    def _right_append(self,*args: Union[list,np.ndarray]):
+        aux = self.transpose()
+        aux._below_append(*args)
+        print(aux)
+        self = aux.transpose()
+        
         
     def to_list(self) -> list:
         return self.array.tolist()
@@ -329,7 +346,7 @@ class Vector(Array):
         return Vector(np.dot(self, other))
 
     def cross_product(self,other):
-        pass
+        return Vector(np.cross(self.array, other))
 
     def append(self, *args) -> None:
         for element in args:
@@ -344,5 +361,6 @@ class Vector(Array):
     def to_list(self) -> list:
         return self.array.tolist()
 
-    def to_nparray(self) -> np.ndarray:
+    def to_numpy(self) -> np.ndarray:
         return self.array
+
