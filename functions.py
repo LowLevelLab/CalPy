@@ -7,6 +7,7 @@ from typing import Optional, Union
 import pandas as pd
 from interpolation import LagrangeInterpolation
 from transforms import *
+from scipy.misc import derivative
 
 
 class Function:
@@ -18,17 +19,17 @@ class Function:
         return self.__function
 
     def __add__(self, other):
-        addition = Function(lambda x: self.function(x) + other.function(x))
-        return addition
+        return Function(lambda x: self.function(x) + other.function(x))
+        
+    def __iadd__(self,other):
+        return self.__add__(other) 
 
     def __sub__(self, other):
-        subtraction = Function(lambda x: self.function(x) - other.function(x))
-        return subtraction
+        return Function(lambda x: self.function(x) - other.function(x))
 
     def __mul__(self, other):
-        multiplication = Function(lambda x: self.function(x) * other.function(x))
-        return multiplication
-
+        return Function(lambda x: self.function(x) * other.function(x))
+        
     def __call__(self, *args: Union[int,float,list,tuple,np.ndarray]):
         if all([isinstance(i,Union[float,int]) for i in args]):
             return np.array(self.function(*args))
@@ -40,7 +41,6 @@ class Function:
             except TypeError:
                 raise TypeError("Invalid types")
 
-
     def __eq__(self, other):
         # x = np.arange(0, 10, 1000)
         # if self.function(x) == other.function(x):
@@ -49,11 +49,7 @@ class Function:
         pass
 
     def __truediv__(self, other):
-        division = Function(lambda x: self.function(x) / other.function(x))
-        return division
-
-    def __abs__(self):
-        return abs(self.function)
+        return Function(lambda x: self.function(x) / other.function(x))
 
     def __str__(self):
         pass
@@ -78,16 +74,16 @@ class Function:
     def derivative(self, x0: Union[float,int], interval: float=c.DELTA) -> float:
         return (self.function(x0 + interval) - self.function(x0)) / interval
 
-    # N-th DERIVATIVE
+    # N-TH DERIVATIVE
 
-    def nth_derivative(self, x0:Union[float,int], n: int, delta_x: float = c.DELTA):
+    def nth_derivative(self, x0:Union[float,int], n: int, delta_x: float = c.ERROR):
         if n < 0:
             raise ValueError("n must be non-negative")
         if n == 0:
             return self.function(x0)
         if n == 1:
             return self.derivative(x0)
-        return ((self.nth_derivative(x0+ delta_x, n-1)-self.nth_derivative(x0-delta_x,n-1))/2*delta_x)
+        return derivative(self.function, x0, n=n, order=2*n+1)
 
     def to_frame(self, *args) -> pd.core.frame.DataFrame:
         aux = pd.DataFrame(data= [list(*args),self(*args)],index=['x','f(x)']).T
@@ -259,12 +255,13 @@ class Function:
 
     # TAYLOR SERIES
 
-    def taylor_series(self, order: int, x0: Union[float,int]) -> Polynomial:
-        l = Function(lambda x: 0)
-        for i in range(order):
-            l+=(Function(lambda x: self.nth_derivative(x0,i)*x**i/scp.factorial(i)))
-        aux = LagrangeInterpolation([x0-1,x0+1],f= l)
-        return aux
+    def taylor_series(self, order: int, x0: Union[float,int], round: Optional[int] = None) -> Polynomial:
+        l = np.zeros(order+1)
+        for i in range(order+1):
+            l[i] = self.nth_derivative(x0,i)/scp.factorial(i)
+            if round is not None:
+                l[i] = l[i].round(round)
+        return Polynomial(l)
         
 
 
