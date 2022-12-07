@@ -86,9 +86,6 @@ class Array:
         pass
 
 
-# MODIFY __str__ : DATAFRAME
-
-
 class Matrix(Array):
 
     """

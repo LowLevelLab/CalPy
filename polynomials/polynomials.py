@@ -1,8 +1,5 @@
-import numpy as np
-from typing import Union, Optional
-import matplotlib.pyplot as plt
+from imports import *
 from complex import Complex
-import pandas as pd
 
 
 class Polynomial:
