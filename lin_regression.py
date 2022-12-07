@@ -1,6 +1,4 @@
-import numpy as np
-from typing import Union, Optional
-from abc import ABCMeta, abstractclassmethod
+from imports import *
 from interpolation import LagrangeInterpolation
 
 

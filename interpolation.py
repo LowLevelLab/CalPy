@@ -1,7 +1,5 @@
-import numpy as np
-import matplotlib.pyplot as plt
+from imports import *
 from polynomials import Polynomial
-from typing import Union, Optional
 
 
 class Interpolation:

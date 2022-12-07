@@ -1,10 +1,5 @@
-import numpy as np
-from error_types import DimensionError
-from typing import Union
-import pandas as pd
+from imports import *
 from complex import Complex
-import scipy as sc
-import constants as c
 
 
 class Array:
@@ -165,10 +160,13 @@ class Matrix(Array):
         aux = np.linalg.inv(self.array)
         return Matrix(aux)
 
-    def append(self,*args: Union[list,np.ndarray], axis: int=0) -> None:
-        if axis == 0:
+    def copy(self):
+        return Matrix(self.array.copy())
+
+    def append(self,*args: Union[list,np.ndarray], axis: Union[int,str]=0) -> None:
+        if axis == 0 or axis =='below':
             return self._below_append(*args)
-        elif axis == 1:
+        elif axis == 1 or axis =='right':
             return self._right_append(*args)
         else:
             raise ValueError
@@ -181,17 +179,14 @@ class Matrix(Array):
                 raise DimensionError
         original_size = len(self)
         final_size = len(self.array) + len(args)
-        print(self)
-        self.array.resize((final_size,len(self[0])), refcheck=False)
-        print(self)
+        self.array.resize((final_size,len(self[0])))
         for i, element in enumerate(args):
             self.array[original_size+i] = np.array(element)
 
     def _right_append(self,*args: Union[list,np.ndarray]):
-        aux = self.transpose()
-        aux._below_append(*args)
-        print(aux)
-        self = aux.transpose()
+        aux = self.transpose().copy()
+        aux.append(*args)
+        self.array = aux.array.transpose()
         
         
     def to_list(self) -> list:
@@ -255,12 +250,6 @@ class Matrix(Array):
         pass
 
     def solution_choleski(self):
-        pass
-
-    def tridiagonal(self):
-        pass
-
-    def pentadiagonal(self):
         pass
 
     def non_linear_newton(self):

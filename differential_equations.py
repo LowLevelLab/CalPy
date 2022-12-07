@@ -1,10 +1,6 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import constants as c
-from typing import Optional, Union
+from imports import *
 from functions import Function
 from arrays import Vector
-import pandas as pd
 
 
 

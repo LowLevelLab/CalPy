@@ -1,13 +1,7 @@
-import constants as c
+from imports import *
 from polynomials import Polynomial
-import numpy as np
-import scipy.special as scp
-import matplotlib.pyplot as plt
-from typing import Optional, Union
-import pandas as pd
 from interpolation import LagrangeInterpolation
 from transforms import *
-from scipy.misc import derivative
 
 
 class Function:
