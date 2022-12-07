@@ -1,4 +1,4 @@
-from lin_regression import *
+from interpolation.lin_regression import *
 
 
 

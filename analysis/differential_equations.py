@@ -1,6 +1,6 @@
 from imports import *
-from functions import Function
-from arrays import Vector
+from analysis.functions import Function
+from array.arrays import Vector
 
 
 

@@ -1,4 +1,4 @@
-from arrays import *
+from array.arrays import *
 
 
 def tridiagonal(a11:Union[int,float],

@@ -1,5 +1,5 @@
 from imports import *
-from interpolation import LagrangeInterpolation
+from interpolation.interpolation import LagrangeInterpolation
 
 
 class Regression(metaclass=ABCMeta):

@@ -1,14 +1,7 @@
-from functions import Function
-import numpy as np
-from scipy.special import factorial
-from scipy.misc import derivative
-import constants as c
+from analysis.functions import Function
 from complex import Quaternion
-from arrays import Matrix
+from array.arrays import Matrix
 
-# a = Function(lambda x: np.sin(x))
-# c = a.taylor_series(7,0, 5)
-# print(c)
 
 
 a = Matrix([[1,2],[3,4]])

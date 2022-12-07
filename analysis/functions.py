@@ -1,7 +1,7 @@
 from imports import *
-from polynomials import Polynomial
-from interpolation import LagrangeInterpolation
-from transforms import *
+from polynomials.polynomials import Polynomial
+from interpolation.interpolation import LagrangeInterpolation
+from analysis.transforms import *
 
 
 class Function:
