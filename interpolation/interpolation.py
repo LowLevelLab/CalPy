@@ -1,5 +1,5 @@
 from imports import *
-from polynomials.polynomials import Polynomial
+from poly.polynomials import Polynomial
 
 
 class Interpolation:

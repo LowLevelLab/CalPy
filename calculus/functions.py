@@ -1,7 +1,7 @@
 from imports import *
-from polynomials.polynomials import Polynomial
+from poly.polynomials import Polynomial
 from interpolation.interpolation import LagrangeInterpolation
-from analysis.transforms import *
+from calculus.transforms import *
 
 
 class Function:
@@ -13,17 +13,37 @@ class Function:
         return self.__function
 
     def __add__(self, other):
-        return Function(lambda x: self.function(x) + other.function(x))
+        if isinstance(other, Function):
+            return Function(lambda x: self.function(x) + other.function(x))
+        elif isinstance(other,Union[float,int]):
+            pass
         
     def __iadd__(self,other):
         return self.__add__(other) 
 
     def __sub__(self, other):
-        return Function(lambda x: self.function(x) - other.function(x))
+        if isinstance(other, Function):
+            return Function(lambda x: self.function(x) - other.function(x))
+        elif isinstance(other,Union[float,int]):
+            pass
 
     def __mul__(self, other):
-        return Function(lambda x: self.function(x) * other.function(x))
-        
+        if isinstance(other, Function):
+            return Function(lambda x: self.function(x) * other.function(x))
+        elif isinstance(other,Union[float,int]):
+            pass
+
+    def __truediv__(self, other):
+        if isinstance(other, Function):
+            return Function(lambda x: self.function(x) / other.function(x))
+        elif isinstance(other,Union[float,int]):
+            pass
+
+    def __eq__(self, other):
+        x = np.arange(0, 10, 10/1000)
+        aux = self-other
+        return all(aux(x)==0.0)
+    
     def __call__(self, *args: Union[int,float,list,tuple,np.ndarray]):
         if all([isinstance(i,Union[float,int]) for i in args]):
             return np.array(self.function(*args))
@@ -34,20 +54,6 @@ class Function:
                     return self.function(*args)
             except TypeError:
                 raise TypeError("Invalid types")
-
-    def __eq__(self, other):
-        # x = np.arange(0, 10, 1000)
-        # if self.function(x) == other.function(x):
-        #     return True
-        # return False
-        pass
-
-    def __truediv__(self, other):
-        return Function(lambda x: self.function(x) / other.function(x))
-
-    def __str__(self):
-        pass
-
 
     """
     ### BASIC METHODS ###
@@ -335,35 +341,42 @@ class MVFunction:
 
     ### BASIC METHODS ###
 
-    def derivative(self, n:int = 1):
+    def derivative(self, axis: int, n:int = 1):
         pass
     
     ### ROOT ###
 
 
-    def newton_raphson(self):
+    def newton_raphson(self, axis: int):
         pass
 
-    def bisection(self):
+    def bisection(self, axis: int):
         pass
 
-    def false_position(self):
+    def false_position(self, axis: int):
         pass
     
-    ### INTEGRAL ###
+    ### SIMPLE INTEGRAL ###
 
 
-    def simpson13(self):
+    def simpson13(self, axis: int):
         pass
 
-    def rectangle(self):
+    def rectangle(self, axis: int):
         pass
 
-    def romberg(self):
+    def romberg(self, axis: int):
         pass
 
-    def trapeze(self):
+    def trapeze(self, axis: int):
         pass
+
+
+    ### MULTIPLE INTEGRAL ###
+
+
+    pass
+
 
     ### OTHERS ###
 

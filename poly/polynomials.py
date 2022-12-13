@@ -8,7 +8,7 @@ class Polynomial:
     ### PROPERTIES ###
     """
 
-    def __init__(self, array: Union[np.ndarray, list]) -> None:
+    def __init__(self, array: Union[np.ndarray, list, tuple]) -> None:
         self.__polynomial = np.array(array)
 
     @property
@@ -95,7 +95,6 @@ class Polynomial:
             return np.array([self._horner_method(element) for element in args[0]])
         else:
             return np.array([self._horner_method(element) for element in args])
-        # return np.array(self.function(*args))
 
     def __truediv__(self, other):
         if isinstance(other, Union[float,int]):
@@ -118,6 +117,8 @@ class Polynomial:
 
 
     def __str__(self) -> str:
+        if len(self.polynomial) == 1:
+            return f'{str(self.polynomial[0])}'
         aux = f'{str(self.polynomial[0])} + {str(self.polynomial[1])}x + '
         for i in range(2,len(self.polynomial)):
             aux += str(self.polynomial[i]) + f'x^{i} + '
@@ -181,13 +182,24 @@ class Polynomial:
             return aux.derivative(n-1)
 
     def to_function(self):
+        from calculus.functions import Function
+        aux = [Function(lambda x: element*(x**i)) for i, element in enumerate(self.polynomial)]
+        return sum(aux)
+
+    def graphic(self, x_interval: list,
+                color: str = 'r', 
+                x_label: str = 'x axis', 
+                y_label: str ='y axis', 
+                title: str= 'p(x)' , 
+                style: str= ''):
+        
         pass
 
 
     """
     ### ROOT-FINDING METHODS ###
     """
-
+    
 
     pass
 

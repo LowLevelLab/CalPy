@@ -105,8 +105,8 @@ class Quaternion:
     def __rpow__(self):
         pass
 
-    def __ipow__(self):
-        pass
+    def __ipow__(self,other):
+        return self.__pow__(other)
 
     def __pos__(self):
         pass
