@@ -61,11 +61,11 @@ class Quaternion:
         else:
             raise TypeError
 
-    def __rmul__(self):
-        pass
+    def __rmul__(self, other):
+        return self.__mul__(other)
 
-    def __imul__(self):
-        pass
+    def __imul__(self, other):
+        return self.__mul__(other)
 
     def __truediv__(self, other):
         if isinstance(other, Union[int,float]):
@@ -96,20 +96,30 @@ class Quaternion:
         return self.__floordiv__(other)
 
     def __pow__(self, index):
-        if index == 0:
-            return 1
-        elif index == 1:
-            return self
-        return self*self.__pow__(index-1)
+        if isinstance(index, int):
+            if index == 0:
+                return 1
+            elif index == 1:
+                return self
+            return self*self.__pow__(index-1)
+        elif isinstance(index, float):
+            pass
+        elif isinstance(index, Quaternion):
+            pass
+        else:
+            pass
 
-    def __rpow__(self):
-        pass
+    def __rpow__(self,other):
+        if isinstance(other, Union[int,float]):
+            pass
+        else:
+            return self.__pow__(other)
 
     def __ipow__(self,other):
         return self.__pow__(other)
 
     def __pos__(self):
-        pass
+        return self
 
     def __neg__(self):
         return Quaternion(-self.real, *(-1*self.imag))

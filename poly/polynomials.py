@@ -183,17 +183,26 @@ class Polynomial:
 
     def to_function(self):
         from calculus.functions import Function
-        aux = [Function(lambda x: element*(x**i)) for i, element in enumerate(self.polynomial)]
-        return sum(aux)
+        aux = 0
+        for i, element in enumerate(self.polynomial):
+            aux = aux + element*Function(lambda x: x**i)
+            # print(aux(2))
+        return aux
 
-    def graphic(self, x_interval: list,
+    def graphic(self, x_interval: Union[list,tuple,np.ndarray],
                 color: str = 'r', 
                 x_label: str = 'x axis', 
                 y_label: str ='y axis', 
                 title: str= 'p(x)' , 
-                style: str= ''):
+                style: str= '-'):
         
-        pass
+        y = [self(xk) for xk in x_interval]
+        xl = plt.xlabel(x_label)
+        yl = plt.ylabel(y_label)
+        ttl = plt.title(title)
+        la = plt.plot(x_interval, y, color, ls= style)
+        plt.show()
+
 
 
     """
@@ -201,7 +210,12 @@ class Polynomial:
     """
     
 
+    def function_root_finding(self, method: str = 'nr'):
+        aux = self.to_function()
+        aux_dict = {}
+        # nr
+        # bis
+        # fp
+        # st
+    
     pass
-
-
-# MODIFY __call__ : return np.array if given iterable

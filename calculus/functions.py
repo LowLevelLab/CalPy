@@ -16,22 +16,37 @@ class Function:
         if isinstance(other, Function):
             return Function(lambda x: self.function(x) + other.function(x))
         elif isinstance(other,Union[float,int]):
-            pass
+            return Function(lambda x: self.function(x) + other)
+
+    def __radd__(self,other):
+        return self.__add__(other)
         
     def __iadd__(self,other):
         return self.__add__(other) 
+
+    def __neg__(self):
+        pass
 
     def __sub__(self, other):
         if isinstance(other, Function):
             return Function(lambda x: self.function(x) - other.function(x))
         elif isinstance(other,Union[float,int]):
-            pass
+            return Function(lambda x: self.function(x) - other)
+
+    def __rsub__(self,other):
+        return self.__sub__(other)
 
     def __mul__(self, other):
         if isinstance(other, Function):
             return Function(lambda x: self.function(x) * other.function(x))
         elif isinstance(other,Union[float,int]):
-            pass
+            return Function(lambda x: self.function(x) * other)
+
+    def __rmul__(self,other):
+        return self.__mul__(other)
+
+    def __imul__(self,other):
+        return self.__mul__(other)
 
     def __truediv__(self, other):
         if isinstance(other, Function):
@@ -170,6 +185,30 @@ class Function:
         pass
 
     """
+        def steffesen(f, x0, tol, maxIter):
+
+        def g(x):
+            return (f(x + f(x))/f(x)) - 1;
+
+        i = 0;
+        x_k = [x0];
+        y_k = [f(x0)];
+
+        while(abs(f(x_k[-1])) > tol or i > maxIter):
+
+            next_x = x_k[-1] - f(x_k[-1])/g(x_k[-1]);
+            
+            x_k.append(next_x);
+            y_k.append(f(next_x));
+
+        # print(x_k);
+        # print(y_k);    
+
+        return x_k[-1];
+    """
+
+
+    """
     ### INTEGRAL OF THE FUNCTION ###
     """
 
@@ -282,8 +321,7 @@ class Function:
         yl = plt.ylabel(y_axis)
         ttl = plt.title(title)
         la = plt.plot(x, y, color, label=label)
-        if local_legend is not None:
-            ll=plt.legend(loc = local_legend)
+        ll=plt.legend(loc = local_legend)
         plt.show()
 
 
@@ -303,29 +341,6 @@ class Function:
 
     def complex_laplace(self):
         return ComplexLaplace(self.function)
-
-    """
-    def steffesen(f, x0, tol, maxIter):
-
-    def g(x):
-        return (f(x + f(x))/f(x)) - 1;
-
-    i = 0;
-    x_k = [x0];
-    y_k = [f(x0)];
-
-    while(abs(f(x_k[-1])) > tol or i > maxIter):
-
-        next_x = x_k[-1] - f(x_k[-1])/g(x_k[-1]);
-        
-        x_k.append(next_x);
-        y_k.append(f(next_x));
-
-    # print(x_k);
-    # print(y_k);    
-
-    return x_k[-1];
-"""
 
 
 class MVFunction:
