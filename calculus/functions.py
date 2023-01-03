@@ -1,5 +1,4 @@
 from imports import *
-from poly.polynomials import Polynomial
 from interpolation.interpolation import LagrangeInterpolation
 from calculus.transforms import *
 
@@ -294,7 +293,8 @@ class Function:
 
     # TAYLOR SERIES
 
-    def taylor_series(self, order: int, x0: Union[float,int], round: Optional[int] = None) -> Polynomial:
+    def taylor_series(self, order: int, x0: Union[float,int], round: Optional[int] = None):
+        from poly.polynomials import Polynomial
         l = np.zeros(order+1)
         for i in range(order+1):
             l[i] = self.nth_derivative(x0,i)/scp.factorial(i)
@@ -314,13 +314,14 @@ class Function:
                       title: str = 'function',
                       color: str = 'r',
                       label: str = 'f(x)',
-                      local_legend: str = 'upper right') -> None:
+                      local_legend: str = 'upper right',
+                      style: str = '-') -> None:
         
         y = [self.function(xk) for xk in x]
         xl = plt.xlabel(x_axis)
         yl = plt.ylabel(y_axis)
         ttl = plt.title(title)
-        la = plt.plot(x, y, color, label=label)
+        la = plt.plot(x, y, color, label=label, ls = style)
         ll=plt.legend(loc = local_legend)
         plt.show()
 
@@ -332,15 +333,15 @@ class Function:
 
     def laplace(self, real: bool = True):
         if real:
-            return Laplace(self.function)
+            return Laplace(self)
         else:
             return self.complex_laplace()
 
     def fourier(self):
-        return Fourier(self.function)
+        return Fourier(self)
 
     def complex_laplace(self):
-        return ComplexLaplace(self.function)
+        return ComplexLaplace(self)
 
 
 class MVFunction:

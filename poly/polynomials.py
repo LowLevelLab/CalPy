@@ -185,8 +185,7 @@ class Polynomial:
         from calculus.functions import Function
         aux = 0
         for i, element in enumerate(self.polynomial):
-            aux = aux + element*Function(lambda x: x**i)
-            # print(aux(2))
+            aux += element*Function(lambda x: x**i)
         return aux
 
     def graphic(self, x_interval: Union[list,tuple,np.ndarray],

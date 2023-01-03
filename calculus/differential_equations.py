@@ -1,6 +1,6 @@
 from imports import *
-from analysis.functions import Function
-from array.arrays import Vector
+from calculus.functions import Function
+from linalg.arrays import Vector
 
 
 

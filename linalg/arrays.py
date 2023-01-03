@@ -137,7 +137,7 @@ class Matrix(Array):
     def _linear_system(self, other):
         return Vector(self.array @ other.array)
 
-    def determinant(self) -> float: ### !!!!!! ###
+    def det(self) -> float: ### !!!!!! ###
         return np.linalg.det(self.array)
     
     def find_row(self, row: list) -> int:
@@ -211,6 +211,12 @@ class Matrix(Array):
         pass
 
     def validate_gs(self):
+        def beta():
+            pass
+        def term(i):
+            return (sum()+sum())/self[i][i]
+        for i in range(len(self)):
+            pass
         pass
 
     def gauss_seidel(self, b):

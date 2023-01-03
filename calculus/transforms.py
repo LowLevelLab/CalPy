@@ -1,8 +1,18 @@
+from imports import *
+from calculus.functions import Function
+
+
+
 class Fourier:
-    pass
+    def __init__(self, f: Function) -> None:
+        pass
+
 
 class Laplace:
-    pass
+    def __init__(self, f: Function) -> None:
+        pass
+
 
 class ComplexLaplace:
-    pass
+    def __init__(self, f: Function) -> None:
+        pass

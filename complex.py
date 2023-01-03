@@ -67,6 +67,9 @@ class Quaternion:
     def __imul__(self, other):
         return self.__mul__(other)
 
+    def commutator(self,other):
+        return self*other-other*self
+
     def __truediv__(self, other):
         if isinstance(other, Union[int,float]):
             return Quaternion(self.real/other, *(self.imag/other))
@@ -142,3 +145,8 @@ class Quaternion:
     def conjugate(self):
         return Quaternion(self.real, *((-1)*self.imag))
     
+
+
+    
+def commutator(p:Quaternion,q:Quaternion):
+    return p.commutator(q)
