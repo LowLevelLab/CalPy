@@ -30,7 +30,8 @@ class RandomVariable:
             return RandomVariable(mean= self.mean + other.mean,
                                   variance=self.var + other.var)
         elif isinstance(other, Union[float,int]):
-            pass
+            return RandomVariable(mean = self.mean + other,
+                                  variance= self.var)
         else:
             raise TypeError
     
@@ -39,7 +40,8 @@ class RandomVariable:
             return RandomVariable(mean= self.mean - other.mean,
                                   variance=self.var - other.var)
         elif isinstance(other, Union[float,int]):
-            pass
+            return RandomVariable(mean = self.mean - other,
+                                  variance= self.var)
         else:
             raise TypeError
 
@@ -58,3 +60,13 @@ class RandomVariable:
             return RandomVariable(mean = self.mean / other, variance= self.var / np.sqrt(other))
         else:
             raise TypeError
+
+    def standardize(self):
+        pass
+
+    def weak_law(self):
+        pass
+
+    def central_limit(self):
+        pass
+    

@@ -4,6 +4,7 @@ from complex import Complex
 
 class Array:
     def __init__(self, arg: Union[list,np.ndarray]) -> None:
+        # breakpoint()
         self.array = np.array(arg)
 
     def __len__(self):
@@ -79,11 +80,6 @@ class Array:
     def __str__(self) -> str:
         return str(self.array)
 
-    def __call__(self, *args):
-        pass
-
-    def __neg__(self):
-        pass
 
 
 class Matrix(Array):
@@ -94,7 +90,16 @@ class Matrix(Array):
 
 
     def __init__(self, arg: list) -> None:
+        if not self.validate_entry(arg):
+            raise ValueError
         super().__init__(arg)
+
+    def validate_entry(self, arg):
+        try:
+            return all(len(arg[0])==len(arg[i]) for i in range(len(arg)))
+        except:
+            return False
+        
 
     def __mul__(self, other):
         if isinstance(other, Union[float,int]):
@@ -124,6 +129,9 @@ class Matrix(Array):
         elif index == 1:
             return self
         return self*self.__pow__(index-1)
+
+    def __neg__(self):
+        return self*(-1)
 
 
     """
@@ -208,25 +216,49 @@ class Matrix(Array):
         return True
 
     def gauss_jacobi(self, b):
-        pass
+        if not self.validate_gj():
+            raise ValueError
+        
 
     def validate_gs(self):
-        def beta():
+        def beta(i: int):
             pass
         def term(i):
-            return (sum()+sum())/self[i][i]
+            return abs((abs(sum(beta(j) for j in range(i)))+abs(sum(self[i][j] for j in range(i+1,len(self[i])))))/self[i][i])
         for i in range(len(self)):
-            pass
-        pass
+            if term(i) >=1:
+                return False
+        return True
 
     def gauss_seidel(self, b):
-        pass
+        if not self.validate_gs():
+            raise ValueError
 
-    def successive_subs(self):
-        pass
+    def validate_ss(self):
+        pass # triangular inferior
 
-    def retroactive_subs(self):
-        pass
+    def successive_subs(self, b):
+        if not self.validate_ss():
+            raise ValueError
+        n=len(b)
+        xs=np.zeros(n)
+        for i in range(n):
+            xs[i] = (b[i] -self.array[i,:i]@xs[:i])/self.array[i,i]
+        return xs
+
+
+    def validate_rs(self):
+        pass # triangular superior
+
+    def retroactive_subs(self, b):
+        if not self.validate_rs():
+            raise ValueError
+        n = b.size
+        x_s = np.zeros(n)
+        for i in reversed(range(n)):
+            x_s[i] = (b[i] - self.array[i, i+1:]@x_s[i+1:])/self.array[i, i]
+        return x_s
+
 
     def gauss_eng(self):
         pass
@@ -309,7 +341,16 @@ class Matrix(Array):
 
 class Vector(Array):
     def __init__(self, arg: list) -> None:
+        if not self.validate_entry(arg):
+            raise ValueError
         super().__init__(arg)
+
+    def validate_entry(self, arg):
+        try:
+            arg[0][0]
+            return False
+        except IndexError:
+            return True
 
     def __mul__(self, other):
         if isinstance(other, Union[float,int, Complex]):
@@ -327,6 +368,9 @@ class Vector(Array):
             return Matrix(aux)
         else:
             return Vector(aux)
+
+    def __neg__(self):
+        return self*(-1)
 
     def __abs__(self):
         return np.sum(self.array**2)
