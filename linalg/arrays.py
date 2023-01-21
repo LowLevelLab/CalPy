@@ -4,7 +4,6 @@ from complex import Complex
 
 class Array:
     def __init__(self, arg: Union[list,np.ndarray]) -> None:
-        # breakpoint()
         self.array = np.array(arg)
 
     def __len__(self):
@@ -77,8 +76,8 @@ class Array:
     def __setitem__(self, key, value):
         self.array[key] = value
 
-    def __str__(self) -> str:
-        return str(self.array)
+    def __str__(self) -> str: 
+        return str(self.array) ### !!! ###
 
 
 
@@ -93,6 +92,8 @@ class Matrix(Array):
         if not self.validate_entry(arg):
             raise ValueError
         super().__init__(arg)
+        self.rows = len(self)
+        self.cols = len(self[0])
 
     def validate_entry(self, arg):
         try:
@@ -170,11 +171,14 @@ class Matrix(Array):
 
     def append(self,*args: Union[list,np.ndarray], axis: Union[int,str]=0) -> None:
         if axis == 0 or axis =='below':
-            return self._below_append(*args)
+            final = self._below_append(*args)
         elif axis == 1 or axis =='right':
-            return self._right_append(*args)
+            final = self._right_append(*args)
         else:
             raise ValueError
+        if not final.validate_entry():
+            raise ValueError
+        return final
 
     def _below_append(self,*args: Union[list,np.ndarray]):
         for element in args:
@@ -209,6 +213,15 @@ class Matrix(Array):
     """
 
 
+    @staticmethod
+    def validate_b(b):
+        if isinstance(b, Union[list,np.ndarray,tuple]):
+            b = Vector(b)
+        elif not isinstance(b, Vector):
+            raise TypeError
+        return b
+        
+    
     def validate_gj(self):
         for i in range(len(self)):
             if sum([abs(aux) for aux in self[i]])/abs(self[i][i])-1 >= 1:
@@ -217,7 +230,7 @@ class Matrix(Array):
 
     def gauss_jacobi(self, b):
         if not self.validate_gj():
-            raise ValueError
+            raise InvalidMethodError(message='gauss-jacobi is an invalid method for this matrix')
         
 
     def validate_gs(self):
@@ -232,32 +245,42 @@ class Matrix(Array):
 
     def gauss_seidel(self, b):
         if not self.validate_gs():
-            raise ValueError
+            raise InvalidMethodError(message='gauss-seidel is an invalid method for this matrix')
 
     def validate_ss(self):
-        pass # triangular inferior
+        for i in range(len(self)):
+            if not self[:i+1] == Vector(np.zeros(self.cols-i)) and self[:i+1] == Vector(np.zeros(self.cols-i, dtype=int)):
+                return False
+        return True
+        # triangular inferior
 
     def successive_subs(self, b):
         if not self.validate_ss():
-            raise ValueError
-        n=len(b)
-        xs=np.zeros(n)
+            raise InvalidMethodError(message='given matrix is not lower triangular')
+        b = Matrix.validate_b(b)
+        n = len(b)
+        x = Vector(np.zeros(n))
         for i in range(n):
-            xs[i] = (b[i] -self.array[i,:i]@xs[:i])/self.array[i,i]
-        return xs
+            x[i] = (b[i] -self[i,:i]*x[:i])/self[i,i]
+        return x
 
 
     def validate_rs(self):
-        pass # triangular superior
+        for i in range(len(self)):
+            if not self[i+1:] == Vector(np.zeros(i)) and self[i+1:] == Vector(np.zeros(i, dtype=int)):
+                return False
+        return True 
+        # triangular superior
 
     def retroactive_subs(self, b):
         if not self.validate_rs():
-            raise ValueError
-        n = b.size
-        x_s = np.zeros(n)
+            raise InvalidMethodError(message='given matrix is not upper triangular')
+        b = Matrix.validate_b(b)
+        n = len(b)
+        x = Vector(np.zeros(n))
         for i in reversed(range(n)):
-            x_s[i] = (b[i] - self.array[i, i+1:]@x_s[i+1:])/self.array[i, i]
-        return x_s
+            x[i] = (b[i] - self[i, i+1:]*x[i+1:])/self[i, i]
+        return x
 
 
     def gauss_eng(self):
@@ -344,12 +367,13 @@ class Vector(Array):
         if not self.validate_entry(arg):
             raise ValueError
         super().__init__(arg)
+        self.size = len(self)
 
     def validate_entry(self, arg):
         try:
             arg[0][0]
             return False
-        except IndexError:
+        except:
             return True
 
     def __mul__(self, other):
@@ -389,7 +413,7 @@ class Vector(Array):
             if not isinstance(element, Union[float,int,complex,Complex]):
                 raise DimensionError
         original_size = len(self)
-        final_size = len(self.array) + len(args)
+        final_size = self.size + len(args)
         self.array.resize(final_size, refcheck=False)
         for i in range(len(args)):
             self.array[original_size+i] = args[i]

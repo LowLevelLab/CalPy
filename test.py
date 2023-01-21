@@ -1,5 +1,5 @@
-import linalg.arrays as arr
+from linalg.arrays import *
+import numpy as np
 
-a = arr.Matrix([[1,2,3],[4,5,6]])
-
-print(a[1,1])
+a = Matrix([[1,0,0],[2,3,0],[4,5,6]])
+print(a.validate_ss())

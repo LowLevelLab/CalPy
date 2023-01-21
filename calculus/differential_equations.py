@@ -62,9 +62,9 @@ class ODE:
 
     def _limit_check(self, x0: Optional[Union[int,float]], xf: Optional[Union[int,float]]) -> int:
         if x0 is None and xf is None:
-            return 0
+            return False
         elif x0 is not None and xf is not None:
-            return 1
+            return True
         else:
             raise ValueError
 

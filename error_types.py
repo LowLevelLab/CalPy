@@ -5,3 +5,10 @@ class DimensionError(Exception):
         msg = f'dimensions are incompatible: array1 {dim1}, '\
               f'array2 {dim2}'
         super(DimensionError, self).__init__(message or msg)
+
+
+class InvalidMethodError(Exception):
+    def __init__(self, message='') -> None:
+        msg=f'method used is invalid'
+        super(InvalidMethodError,self).__init__(message or msg)
+# InvalidMethodError
