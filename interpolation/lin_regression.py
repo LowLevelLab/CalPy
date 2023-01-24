@@ -1,5 +1,6 @@
 from imports import *
 from interpolation.interpolation import LagrangeInterpolation
+from calculus.functions import Function
 
 
 class Regression(metaclass=ABCMeta):
@@ -11,6 +12,16 @@ class Regression(metaclass=ABCMeta):
             raise TypeError
         self.y = np.array(ylist)
         self.coeff = self.coeff_regression()
+        if type(self) == Regression:            
+            self.regressions = {
+                'exp' : ExpRegression(self.x, self.y),
+                'hpb' : HypRegression(self.x, self.y),
+                'lin' : LinRegression(self.x, self.y),
+                'log' : LogRegression(self.x, self.y),
+                'pol' : PolyRegression(self.x, self.y),
+                'pot' : PotRegression(self.x, self.y),
+                'inv' : InvRegression(self.x, self.y)
+            }
 
     # @property
     # def x(self) -> np.ndarray:
@@ -34,25 +45,58 @@ class Regression(metaclass=ABCMeta):
     #         self.__y = ylist
 
     def __call__(self, kind: str):
-        possibilities = {
-            'exp' : ExpRegression(self.x, self.y),
-            'hpb' : HypRegression(self.x, self.y),
-            'lin' : LinRegression(self.x, self.y),
-            'log' : LogRegression(self.x, self.y),
-            'pol' : PolyRegression(self.x, self.y),
-            'pot' : PotRegression(self.x, self.y),
-            'inv' : InvRegression(self.x, self.y),
-            'opt' : 0
-        }
-        return possibilities[kind]
+        # possibilities = {
+        #     'exp' : ExpRegression(self.x, self.y),
+        #     'hpb' : HypRegression(self.x, self.y),
+        #     'lin' : LinRegression(self.x, self.y),
+        #     'log' : LogRegression(self.x, self.y),
+        #     'pol' : PolyRegression(self.x, self.y),
+        #     'pot' : PotRegression(self.x, self.y),
+        #     'inv' : InvRegression(self.x, self.y),
+        #     'opt' : self.optimize()
+        # }
+        # !!!! avoid triggering functions before call !!!!
+        if type(self) == Regression:
+            if kind == 'opt':
+                return self.optimize()
+            return self.regressions[kind]
 
-    # @abstractclassmethod
     def square_residue(self) -> float:
-        pass
+        f = Function(self.to_function())
+        aux = np.array(f(self.x))
+        return np.sum((self.y-aux)**2)
 
-    # @abstractclassmethod
     def coeff_regression(self) -> tuple:
         return (0,0)
+
+    def to_function(self):
+        pass
+
+    def optimize(self):
+        keys = ['exp','hpb','lin','log','pot','inv']
+
+        residues = [ExpRegression(self.x, self.y).square_residue(),
+                    HypRegression(self.x, self.y).square_residue(),
+                    LinRegression(self.x, self.y).square_residue(),
+                    LogRegression(self.x, self.y).square_residue(),
+                    PotRegression(self.x, self.y).square_residue(),
+                    InvRegression(self.x, self.y).square_residue()]
+
+        # regressions_map = {
+        #     'exp' : ExpRegression(self.x, self.y),
+        #     'hpb' : HypRegression(self.x, self.y),
+        #     'lin' : LinRegression(self.x, self.y),
+        #     'log' : LogRegression(self.x, self.y),
+        #     'pot' : PotRegression(self.x, self.y),
+        #     'inv' : InvRegression(self.x, self.y),
+        # }
+
+        # !!!! improve variables keys and residues !!!!
+        # !!!! avoid rewriting dictionary !!!!
+
+        residue_map = dict(element for element in zip(residues,keys))
+        # print(residue_map[min(residue_map.keys())])
+        return self.regressions[residue_map[min(residue_map.keys())]]
 
 
 class LinRegression(Regression):
@@ -197,14 +241,4 @@ class LogisticRegression(Regression):
     def coeff_regression(self) -> tuple:
         pass
 
-
-class GaussRegression(Regression):
-    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
-        super().__init__(xlist, ylist)
-
-    def __str__(self) -> str:
-        pass 
-
-    def coeff_regression(self) -> tuple:
-        pass
 """
