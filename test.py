@@ -15,7 +15,7 @@ pontos_x = [1,2,3,4]
 pontos_y = [2,4,8,16]
 reg = lin.Regression(pontos_x,pontos_y)
 
-exp = reg('opt')
-print(exp.square_residue())
+opt = reg('opt')
+print(type(opt))
 
 

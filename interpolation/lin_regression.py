@@ -12,16 +12,17 @@ class Regression(metaclass=ABCMeta):
             raise TypeError
         self.y = np.array(ylist)
         self.coeff = self.coeff_regression()
-        if type(self) == Regression:            
-            self.regressions = {
-                'exp' : ExpRegression(self.x, self.y),
-                'hpb' : HypRegression(self.x, self.y),
-                'lin' : LinRegression(self.x, self.y),
-                'log' : LogRegression(self.x, self.y),
-                'pol' : PolyRegression(self.x, self.y),
-                'pot' : PotRegression(self.x, self.y),
-                'inv' : InvRegression(self.x, self.y)
-            }
+        if type(self) == Regression:  
+            self.keys = ['exp','hpb','lin','log','pot','inv']
+
+            self.regressions = [ExpRegression(self.x, self.y),
+                    HypRegression(self.x, self.y),
+                    LinRegression(self.x, self.y),
+                    LogRegression(self.x, self.y),
+                    PotRegression(self.x, self.y),
+                    InvRegression(self.x, self.y)]     
+
+            self.dict_reg = dict(element for element in zip(self.keys, self.regressions))     
 
     # @property
     # def x(self) -> np.ndarray:
@@ -45,21 +46,15 @@ class Regression(metaclass=ABCMeta):
     #         self.__y = ylist
 
     def __call__(self, kind: str):
-        # possibilities = {
-        #     'exp' : ExpRegression(self.x, self.y),
-        #     'hpb' : HypRegression(self.x, self.y),
-        #     'lin' : LinRegression(self.x, self.y),
-        #     'log' : LogRegression(self.x, self.y),
-        #     'pol' : PolyRegression(self.x, self.y),
-        #     'pot' : PotRegression(self.x, self.y),
-        #     'inv' : InvRegression(self.x, self.y),
-        #     'opt' : self.optimize()
-        # }
+
         # !!!! avoid triggering functions before call !!!!
+
         if type(self) == Regression:
             if kind == 'opt':
                 return self.optimize()
-            return self.regressions[kind]
+            elif kind == 'pol':
+                return PolyRegression(self.x, self.y)
+            return self.dict_reg[kind]
 
     def square_residue(self) -> float:
         f = Function(self.to_function())
@@ -73,30 +68,12 @@ class Regression(metaclass=ABCMeta):
         pass
 
     def optimize(self):
-        keys = ['exp','hpb','lin','log','pot','inv']
-
-        residues = [ExpRegression(self.x, self.y).square_residue(),
-                    HypRegression(self.x, self.y).square_residue(),
-                    LinRegression(self.x, self.y).square_residue(),
-                    LogRegression(self.x, self.y).square_residue(),
-                    PotRegression(self.x, self.y).square_residue(),
-                    InvRegression(self.x, self.y).square_residue()]
-
-        # regressions_map = {
-        #     'exp' : ExpRegression(self.x, self.y),
-        #     'hpb' : HypRegression(self.x, self.y),
-        #     'lin' : LinRegression(self.x, self.y),
-        #     'log' : LogRegression(self.x, self.y),
-        #     'pot' : PotRegression(self.x, self.y),
-        #     'inv' : InvRegression(self.x, self.y),
-        # }
+        residues = [element.square_residue() for element in self.regressions]
 
         # !!!! improve variables keys and residues !!!!
-        # !!!! avoid rewriting dictionary !!!!
 
-        residue_map = dict(element for element in zip(residues,keys))
-        # print(residue_map[min(residue_map.keys())])
-        return self.regressions[residue_map[min(residue_map.keys())]]
+        residue_map = dict(element for element in zip(residues,self.keys))
+        return self.dict_reg[residue_map[min(residue_map.keys())]]
 
 
 class LinRegression(Regression):
