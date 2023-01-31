@@ -64,6 +64,7 @@ class Regression(metaclass=ABCMeta):
     def coeff_regression(self) -> tuple:
         return (0,0)
 
+    # @abstractclassmethod
     def to_function(self):
         pass
 
@@ -163,9 +164,10 @@ class PolyRegression(Regression):
 
     def coeff_regression(self) -> tuple:
         self.coeff = [element for element in range(2)] 
+        
     """self.inter.poly"""
     def to_function(self):
-        return self.inter.poly.to_function()
+        return self.inter.poly.to_function().function
 
 
 class HypRegression(Regression):
@@ -202,20 +204,3 @@ class InvRegression(Regression):
 
     def to_function(self):
         return lambda x: self.coeff[1] + self.coeff[0]/x
-
-"""
-class LogisticRegression(Regression):
-    def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray], lim: Optional[Union[float,int]]=1) -> None:
-        super().__init__(xlist, ylist)
-        if isinstance(lim, Union[float,int]) and lim != 1:
-            self.lim = lim
-        else:
-            self.lim=1
-
-    def __str__(self) -> str:
-        return str(self.lim) #f"y = {self.lim}/(1+e^({self.coeff[0]}*(x-{self.coeff[1]})))"
-
-    def coeff_regression(self) -> tuple:
-        pass
-
-"""

@@ -24,7 +24,7 @@ class Function:
         return self.__add__(other) 
 
     def __neg__(self):
-        pass
+        return 0-self
 
     def __sub__(self, other):
         if isinstance(other, Function):
@@ -60,7 +60,7 @@ class Function:
     
     def __call__(self, *args: Union[int,float,list,tuple,np.ndarray]):
         if all([isinstance(i,Union[float,int]) for i in args]):
-            return np.array(self.function(*args))
+            return self.function(*args)
         else:
             try:
                 if all([len(args[0]) == len(args[i]) for i in range(len(args))]):
@@ -179,32 +179,26 @@ class Function:
             x = x1
         return x
 
-    def steffensen(self) -> Union[float,int]:
+    def steffensen(self,
+                   x0:Union[int,float],
+                   error: float = c.ERROR,
+                   iter: int = c.ITERATIONS) -> Union[float,int]:
         g = lambda x: self(x+self(x))/self(x) - 1
-        pass
+        i = 0
+        xk = [x0]
+        yk = [self(x0)]
 
-    """
-        def steffesen(f, x0, tol, maxIter):
+        while(abs(self(xk[-1])) > error or i > iter):
 
-        def g(x):
-            return (f(x + f(x))/f(x)) - 1;
-
-        i = 0;
-        x_k = [x0];
-        y_k = [f(x0)];
-
-        while(abs(f(x_k[-1])) > tol or i > maxIter):
-
-            next_x = x_k[-1] - f(x_k[-1])/g(x_k[-1]);
+            x = xk[-1] - self(xk[-1])/g(xk[-1])
             
-            x_k.append(next_x);
-            y_k.append(f(next_x));
+            xk.append(x)
+            yk.append(self(x))
+        
+        # print(xk)
+        # print(yk)
 
-        # print(x_k);
-        # print(y_k);    
-
-        return x_k[-1];
-    """
+        return xk[-1]
 
 
     """

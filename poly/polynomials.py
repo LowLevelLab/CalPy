@@ -183,10 +183,7 @@ class Polynomial:
 
     def to_function(self):
         from calculus.functions import Function
-        aux = 0
-        for i, element in enumerate(self.polynomial):
-            aux += element*Function(lambda x: x**i)
-        return aux
+        return Function(lambda x: sum(element*x**i for i, element in enumerate(self.polynomial)))
 
     def graphic(self, x_interval: Union[list,tuple,np.ndarray],
                 color: str = 'r', 

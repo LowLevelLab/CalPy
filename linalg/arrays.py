@@ -213,8 +213,9 @@ class Matrix(Array):
     """
 
 
-    @staticmethod
-    def validate_b(b):
+    def validate_b(self,b):
+        if len(b) != self.cols:
+            raise DimensionError(dim1=self.cols,dim2=len(b))
         if isinstance(b, Union[list,np.ndarray,tuple]):
             b = Vector(b)
         elif not isinstance(b, Vector):
@@ -248,7 +249,7 @@ class Matrix(Array):
             raise InvalidMethodError(message='gauss-seidel is an invalid method for this matrix')
 
     def validate_ss(self):
-        for i in range(len(self)):
+        for i in range(self.rows):
             if not self[:i+1] == Vector(np.zeros(self.cols-i)) and self[:i+1] == Vector(np.zeros(self.cols-i, dtype=int)):
                 return False
         return True
@@ -257,7 +258,7 @@ class Matrix(Array):
     def successive_subs(self, b):
         if not self.validate_ss():
             raise InvalidMethodError(message='given matrix is not lower triangular')
-        b = Matrix.validate_b(b)
+        b = self.validate_b(b)
         n = len(b)
         x = Vector(np.zeros(n))
         for i in range(n):
@@ -266,7 +267,7 @@ class Matrix(Array):
 
 
     def validate_rs(self):
-        for i in range(len(self)):
+        for i in range(self.rows):
             if not self[i+1:] == Vector(np.zeros(i)) and self[i+1:] == Vector(np.zeros(i, dtype=int)):
                 return False
         return True 
@@ -275,7 +276,7 @@ class Matrix(Array):
     def retroactive_subs(self, b):
         if not self.validate_rs():
             raise InvalidMethodError(message='given matrix is not upper triangular')
-        b = Matrix.validate_b(b)
+        b = self.validate_b(b)
         n = len(b)
         x = Vector(np.zeros(n))
         for i in reversed(range(n)):
@@ -386,7 +387,9 @@ class Vector(Array):
         else:
             raise TypeError
 
+    # !!!!!!!!!!!!!!!!!!!!! #
     def __call__(self, *args):
+        # breakpoint()
         aux = [element(*args) for element in self.array]
         if not isinstance(aux[0], Union[float,int]):
             return Matrix(aux)
