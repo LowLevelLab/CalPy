@@ -206,12 +206,11 @@ class Polynomial:
     """
     
 
-    def function_root_finding(self, method: str = 'nr'):
+    def function_root_finding(self, method: str = 'nr',
+                              interval: list = [0,1],
+                              guess: Union[int,float] = 0):
         aux = self.to_function()
-        aux_dict = {}
-        # nr
-        # bis
-        # fp
-        # st
-    
-    pass
+        aux_dict = {'nr': aux.newton_raphson(),
+                    'bis' : aux.bisection(),
+                    'fp' : aux.false_position(),
+                    'st' : aux.steffensen()}

@@ -387,9 +387,7 @@ class Vector(Array):
         else:
             raise TypeError
 
-    # !!!!!!!!!!!!!!!!!!!!! #
     def __call__(self, *args):
-        # breakpoint()
         aux = [element(*args) for element in self.array]
         if not isinstance(aux[0], Union[float,int]):
             return Matrix(aux)
