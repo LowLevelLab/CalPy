@@ -210,7 +210,8 @@ class Polynomial:
                               interval: list = [0,1],
                               guess: Union[int,float] = 0):
         aux = self.to_function()
-        aux_dict = {'nr': aux.newton_raphson(),
-                    'bis' : aux.bisection(),
-                    'fp' : aux.false_position(),
-                    'st' : aux.steffensen()}
+        aux_dict = {'nr': aux.newton_raphson(x=guess),
+                    'bis' : aux.bisection(lower=interval[0],upper=interval[1]),
+                    'fp' : aux.false_position(lower=interval[0],upper=interval[1]),
+                    'st' : aux.steffensen(x=guess)}
+        return aux_dict[method]

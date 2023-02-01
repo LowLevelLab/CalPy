@@ -71,7 +71,10 @@ class Array:
         return self.__sub__(other)
     
     def __getitem__(self, item):
-        return Vector(self.array[item])
+        try:
+            return Vector(self.array[item])
+        except:
+            return Matrix(self.array[item])
 
     def __setitem__(self, key, value):
         self.array[key] = value
@@ -101,7 +104,6 @@ class Matrix(Array):
         except:
             return False
         
-
     def __mul__(self, other):
         if isinstance(other, Union[float,int]):
             return Matrix(self.array * other)
@@ -250,7 +252,7 @@ class Matrix(Array):
 
     def validate_ss(self):
         for i in range(self.rows):
-            if not self[:i+1] == Vector(np.zeros(self.cols-i)) and self[:i+1] == Vector(np.zeros(self.cols-i, dtype=int)):
+            if not (self[i,:i+1] == Vector(np.zeros(self.cols-i)) and self[i,:i+1] == Vector(np.zeros(self.cols-i, dtype=int))):
                 return False
         return True
         # triangular inferior
@@ -268,7 +270,7 @@ class Matrix(Array):
 
     def validate_rs(self):
         for i in range(self.rows):
-            if not self[i+1:] == Vector(np.zeros(i)) and self[i+1:] == Vector(np.zeros(i, dtype=int)):
+            if not (self[i,i+1:] == Vector(np.zeros(i)) and self[i,i+1:] == Vector(np.zeros(i, dtype=int))):
                 return False
         return True 
         # triangular superior
@@ -293,7 +295,7 @@ class Matrix(Array):
     def gauss_elimination(self, pivot=False):
         pass
 
-    def linear_conjugate_gradient(self):
+    def linear_conjugate_gradient(self): # lcg
         pass
 
     def LU_decomposition(self):
@@ -364,7 +366,7 @@ class Matrix(Array):
 
 
 class Vector(Array):
-    def __init__(self, arg: list) -> None:
+    def __init__(self, arg: Union[list,slice]) -> None:
         if not self.validate_entry(arg):
             raise ValueError
         super().__init__(arg)
@@ -372,7 +374,8 @@ class Vector(Array):
 
     def validate_entry(self, arg):
         try:
-            arg[0][0]
+            if not isinstance(arg,slice):
+                arg[0][0]
             return False
         except:
             return True
