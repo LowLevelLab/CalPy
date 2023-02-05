@@ -5,6 +5,7 @@ from calculus.functions import Function
 
 class Regression(metaclass=ABCMeta):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
+        self.na = 'drop'
         if not isinstance(xlist, Union[list, np.ndarray]):
             raise TypeError
         self.x = np.array(xlist)
@@ -107,7 +108,7 @@ class ExpRegression(Regression):
         return f"y = {str(self.coeff[1])}*e^({str(self.coeff[0])}*x)"
 
     def coeff_regression(self) -> tuple:
-        self.x, self.y = na(self.x,self.y,'exp')
+        self.x, self.y = na(self.x,self.y,'exp',self.na)
         y_new = np.log(self.y)
         aux = LinRegression(self.x, y_new)
         aux1 = aux.coeff_regression()
@@ -126,7 +127,7 @@ class LogRegression(Regression):
         return f"y = {str(self.coeff[1])} + {str(self.coeff[0])}log(x)"
     
     def coeff_regression(self) -> tuple:
-        self.x, self.y = na(self.x,self.y,'log')
+        self.x, self.y = na(self.x,self.y,'log',self.na)
         x_new = np.log(self.x)
         aux = LinRegression(x_new, self.y)
         aux1 = aux.coeff_regression()
@@ -145,7 +146,7 @@ class PotRegression(Regression):
         return f"y = {str(self.coeff[1])}*x^({str(self.coeff[0])})"
 
     def coeff_regression(self) -> tuple:
-        self.x, self.y = na(self.x,self.y,'pot')
+        self.x, self.y = na(self.x,self.y,'pot',self.na)
         x_new = np.log(self.x)
         y_new = np.log(self.y)
         aux = LinRegression(x_new, y_new)
@@ -180,7 +181,7 @@ class HypRegression(Regression):
         return f"y = 1/({str(self.coeff[1])} + {str(self.coeff[0])}x)"
 
     def coeff_regression(self) -> tuple:
-        self.x, self.y = na(self.x,self.y,'hpb')
+        self.x, self.y = na(self.x,self.y,'hpb',self.na)
         y_new = 1/self.y
         aux = LinRegression(self.x, y_new)
         aux1 = aux.coeff_regression()
@@ -199,7 +200,7 @@ class InvRegression(Regression):
         return f"y = {str(self.coeff[1])} + {str(self.coeff[0])}/x"
 
     def coeff_regression(self) -> tuple:
-        self.x, self.y = na(self.x,self.y,'inv')
+        self.x, self.y = na(self.x,self.y,'inv',self.na)
         x_new = 1/self.x
         aux = LinRegression(x_new, self.y)
         aux1 = aux.coeff_regression()
@@ -250,7 +251,7 @@ def na(x: np.ndarray, y: np.ndarray, kind: str, type: str = 'drop', filler: Opti
     elif type == 'fill':
         return fillna(x, y, kind, filler)
     else:
-        raise InvalidMethodError ### !!!!!!!!!!!!!!!!! ###
+        raise InvalidArgumentError
 
 def dropna(x, y, kind):
     dic = dict((xk,yk) for xk,yk in zip(x,y))
@@ -291,24 +292,36 @@ def dropna(x, y, kind):
             dic.pop(element)
         nx, ny = np.array([*dic.keys()]), np.array([*dic.values()])
     else:
-        raise TypeError
+        raise InvalidArgumentError
     elim.clear()
     return nx, ny
 
 def fillna(x, y, kind, filler):
     dic = dict((xk,yk) for xk,yk in zip(x,y))
+    new = {}
     if kind == 'inv':
-        for element in dic.keys():
-            if element == 0:
-                dic.pop(element)
-        nx, ny = np.array([*dic.keys()]), np.array([*dic.values()])
+        for index, element in dic.items():
+            if index != 0:
+                new[index] = element
+        nx, ny = np.array([*new.keys()]), np.array([*new.values()])
     elif kind == 'log':
-        pass
+        for index, element in dic.items():
+            if index > 0:
+                new[index] = element
+        nx, ny = np.array([*new.keys()]), np.array([*new.values()])
     elif kind == 'hpb':
-        pass
+        for index, element in dic.items():
+            if element != 0:
+                new[index] = element
+        nx, ny = np.array([*new.keys()]), np.array([*new.values()])
     elif kind == 'exp':
-        pass
+        for index, element in dic.items():
+            if element > 0:
+                new[index] = element
+        nx, ny = np.array([*new.keys()]), np.array([*new.values()])
     elif kind == 'pot':
-        pass
+        for index, element in dic.items():
+            if index > 0 and element > 0:
+                new[index] = element
+        nx, ny = np.array([*new.keys()]), np.array([*new.values()])
     return nx, ny
-    pass

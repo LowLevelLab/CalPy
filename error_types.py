@@ -11,4 +11,10 @@ class InvalidMethodError(Exception):
     def __init__(self, message='') -> None:
         msg=f'method used is invalid'
         super(InvalidMethodError,self).__init__(message or msg)
-# InvalidMethodError
+
+
+class InvalidArgumentError(Exception):
+    def __init__(self, message='') -> None:
+        msg=f'method does not support given argument'
+        super(InvalidMethodError,self).__init__(message or msg)
+
