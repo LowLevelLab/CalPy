@@ -70,11 +70,19 @@ class Array:
     def __isub__(self,other):
         return self.__sub__(other)
     
+
+
+    # !!!!!!!!!!!!! UPDATE !!!!!!!!!!!!!!!!!!
+
     def __getitem__(self, item):
         try:
             return Vector(self.array[item])
         except:
-            return Matrix(self.array[item])
+            raise TypeError
+        # try:
+        #     return Vector(self.array[item])
+        # except:
+        #     return Matrix(self.array[item])
 
     def __setitem__(self, key, value):
         self.array[key] = value
@@ -366,13 +374,18 @@ class Matrix(Array):
 
 
 class Vector(Array):
-    def __init__(self, arg: Union[list,slice]) -> None:
+    def __init__(self, arg: Union[list, slice, np.ndarray]) -> None:
         if not self.validate_entry(arg):
             raise ValueError
         super().__init__(arg)
-        self.size = len(self)
+        self.size = len(arg) if isinstance(arg,Union[list,np.ndarray]) else 1
+
+    # !!!!!!!!!!!!! UPDATE !!!!!!!!!!!!!!!!!!
+
 
     def validate_entry(self, arg):
+        if isinstance(arg, Union[np.int32,np.int64,np.float32,np.float64,int,float]):
+            return True
         try:
             if not isinstance(arg,slice):
                 arg[0][0]
