@@ -3,11 +3,17 @@ import linalg.arrays as arr
 
 
 class BoolMatrix:
-    def __init__(self, array: arr.Matrix) -> None:
-        self.__aux = arr.Matrix(array)
-        self.__matrix = self.convert_type(arr.Matrix(array))
-        self.__rows = array.rows
-        self.__cols =  array.cols
+    def __init__(self, array: Union[arr.Matrix,np.ndarray]) -> None:
+        if len(array) != 0:
+            self.__aux = arr.Matrix(array)
+            self.__rows = array.rows
+            self.__cols = array.cols
+        else:
+            self.__aux = array
+            self.__rows = 0
+            self.__cols = 0
+        self.__matrix = self.convert_type(self.aux)
+       
 
     @property
     def aux(self):
@@ -26,18 +32,30 @@ class BoolMatrix:
         return self.__cols
 
     def convert_type(self, array):
-        pass
-        # aux = np.zeros((array.rows,array.cols), dtype=int)
-        # for r in range(array.rows):
-        #     for c in range(array.cols):
-        #         # if 
+        if isinstance(array,arr.Matrix):
+            aux = self.aux.copy()
+            for i in range(self.rows):
+                for j in range(self.cols):
+                    if aux[i,j] != 0:
+                        aux[i,j] = 1
+            return aux
+        else:
+            return array
+
+    def __str__(self) -> str:
+        return str(self.matrix)
                 
     def __add__(self,other):
-        return self or other
+        return BoolMatrix(self.matrix+other.matrix) 
+
+    def __sub__(self,other):
+        return BoolMatrix(self.matrix-other.matrix)
 
     def __mul__(self,other):
-        aux = self.aux*other.aux
-        return BoolMatrix(aux)
+        if isinstance(other, BoolMatrix):
+            return BoolMatrix(self.matrix*other.matrix)
+        else:
+            raise TypeError
 
     def __pow__(self,index):
         if not isinstance(index,int):
@@ -52,19 +70,65 @@ class BoolMatrix:
         return self*self.__pow__(index-1)
 
     def __eq__(self,other):
+        ### CHECK FOR 0 LEN MATRICES ###
         if isinstance(self,BoolMatrix) and isinstance(other,BoolMatrix):
             for i,v in enumerate(self.aux):
                 if not all((v == other[i]).tolist()):
                     return False
             return True
 
+    def __and__(self,other):
+        if not isinstance(other,BoolMatrix):
+            raise TypeError(f"invalid type: {type(other)}. Expected {type(self)}")
+        if self.rows == 0 ^ other.rows == 0:
+            return False
+        if self.cols != other.cols or self.rows != other.rows:
+            return False
+        return self*other
+
+    def __or__(self,other):
+        if not isinstance(other,BoolMatrix):
+            raise TypeError(f"invalid type: {type(other)}. Expected {type(self)}")
+        if self.rows == 0 ^ other.rows == 0:
+            return False
+        if self.cols != other.cols or self.rows != other.rows:
+            return False
+        return self+other
+
+    def __xor__(self,other):
+        if not isinstance(other,BoolMatrix):
+            raise TypeError(f"invalid type: {type(other)}. Expected {type(self)}")
+        if self.rows == 0 ^ other.rows == 0:
+            return True
+        if self.cols != other.cols or self.rows != other.rows:
+            return False
+        return self-other
+        
+    def __getitem__(self,item):
+        return BoolMatrix(self.matrix[item])
+
     def transpose(self):
         return BoolMatrix(self.aux.transpose())
 
+    def isone(self):
+        if self.rows == 0:
+            return False
+        for element in self.matrix:
+            if not all(element):
+                return False
+        return True
+        # return self == BoolMatrix(np.eye((self.rows,self.cols))) 
 
-    def compare_transitive(self,other):
-        pass
+    def isnull(self):
+        if self.rows == 0:
+            return True
+        for element in self.matrix:
+            if any(element):
+                return False
+        return True
+        # return self == BoolMatrix(np.zeros((self.rows,self.cols))) 
 
-    # and
-    # or
-    # xor
+    def compare_transitive(self):
+        m2 = self**2
+        aux = m2 ^ self
+        return aux.isnull() 

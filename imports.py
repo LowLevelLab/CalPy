@@ -1,6 +1,6 @@
 import numpy as np
 from error_types import *
-from typing import Union, Optional
+from typing import Union, Optional, overload
 import pandas as pd
 import scipy as sc
 import constants as c

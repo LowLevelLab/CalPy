@@ -4,24 +4,9 @@ import interpolation.regression as lin
 from calculus.functions import Function
 from poly.polynomials import Polynomial
 from linalg.arrays import Vector, Matrix
-from calculus.differential_equations import ODE
-
-# x = [0,1,2,3,4]
-# y = [1,2,3/2,4/3,5/4]
-
-# # reg = lin.Regression(x,y)
-# # exp = reg('inv')
-# # print(exp)
-
-# edo = ODE([lambda x,y,z: y,lambda x,y,z:z], [0,1])
-
-# sol = edo.euler2([1,1])
-# print(sol.cross_map(1,2,style='--'))
-
-l = Matrix([[1,2,1],[0,1,1]]) # 1 2 1
-s = Matrix([[1,2],[0,1]])     # 0 1 1
+from discrete.boolArr import BoolMatrix
 
 
-
-print(type(l[1,1:]))
+a = BoolMatrix(Matrix([[1,1,1,1],[0,1,0,1],[0,0,1,0],[0,0,0,1]]))
+print(a.compare_transitive())
 

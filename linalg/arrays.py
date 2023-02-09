@@ -37,6 +37,10 @@ class Array:
                 if not (v == other[i]).tolist():
                     return False
             return True
+        elif isinstance(self,Vector) and isinstance(other, Union[np.int32,np.int64,np.float32,np.float64,int,float]) and self.size != 0:
+            return self[0] == other
+        elif isinstance(self,Vector) and isinstance(other, Union[np.int32,np.int64,np.float32,np.float64,int,float]) and self.size == 0:
+            return self.array == other
         else:
             return False
     
@@ -65,10 +69,10 @@ class Array:
                 return Matrix(self.array - other.array)
 
     def __iadd__(self,other):
-        return self.__add__(other)
+        self = self.__add__(other)
 
     def __isub__(self,other):
-        return self.__sub__(other)
+        self = self.__sub__(other)
     
 
 
@@ -78,17 +82,16 @@ class Array:
         try:
             return Vector(self.array[item])
         except:
-            raise TypeError
-        # try:
-        #     return Vector(self.array[item])
-        # except:
-        #     return Matrix(self.array[item])
+            return Matrix(self.array[item])
 
     def __setitem__(self, key, value):
         self.array[key] = value
 
     def __str__(self) -> str: 
         return str(self.array) ### !!! ###
+
+    def copy(self):
+        return Array(self.array.copy())
 
 
 
@@ -127,7 +130,7 @@ class Matrix(Array):
             return self.__mul__(other)
 
     def __imul__(self,other):
-        return self.__mul__(other)
+        self = self.__mul__(other)
 
     def __pow__(self, index):
         if not isinstance(index,int):
@@ -378,17 +381,15 @@ class Vector(Array):
         if not self.validate_entry(arg):
             raise ValueError
         super().__init__(arg)
-        self.size = len(arg) if isinstance(arg,Union[list,np.ndarray]) else 1
+        self.size = len(arg) if isinstance(arg,Union[list,np.ndarray]) else 0
 
     # !!!!!!!!!!!!! UPDATE !!!!!!!!!!!!!!!!!!
-
 
     def validate_entry(self, arg):
         if isinstance(arg, Union[np.int32,np.int64,np.float32,np.float64,int,float]):
             return True
         try:
-            if not isinstance(arg,slice):
-                arg[0][0]
+            arg[0][0]
             return False
         except:
             return True
@@ -414,7 +415,10 @@ class Vector(Array):
         return self*(-1)
 
     def __abs__(self):
-        return np.sum(self.array**2)
+        return np.sqrt(np.sum(self.array**2))
+
+    def __getitem__(self, item):
+        return self.array[item]
 
     def _transpose_linear_system(self, other):
         return Vector((other.array.transpose()@self.array.transpose()).transpose())
