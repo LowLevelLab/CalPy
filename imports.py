@@ -8,3 +8,4 @@ import matplotlib.pyplot as plt
 from abc import ABCMeta, abstractclassmethod
 from scipy.misc import derivative
 import scipy.special as scp
+from time import time

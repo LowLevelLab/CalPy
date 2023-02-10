@@ -70,12 +70,8 @@ class BoolMatrix:
         return self*self.__pow__(index-1)
 
     def __eq__(self,other):
-        ### CHECK FOR 0 LEN MATRICES ###
-        if isinstance(self,BoolMatrix) and isinstance(other,BoolMatrix):
-            for i,v in enumerate(self.aux):
-                if not all((v == other[i]).tolist()):
-                    return False
-            return True
+        # return not (self^other).isone()
+        pass
 
     def __and__(self,other):
         if not isinstance(other,BoolMatrix):
@@ -110,25 +106,23 @@ class BoolMatrix:
     def transpose(self):
         return BoolMatrix(self.aux.transpose())
 
-    def isone(self):
+    def isone(self) -> bool:
         if self.rows == 0:
             return False
         for element in self.matrix:
             if not all(element):
                 return False
         return True
-        # return self == BoolMatrix(np.eye((self.rows,self.cols))) 
 
-    def isnull(self):
+    def isnull(self) -> bool:
         if self.rows == 0:
             return True
         for element in self.matrix:
             if any(element):
                 return False
         return True
-        # return self == BoolMatrix(np.zeros((self.rows,self.cols))) 
 
-    def compare_transitive(self):
+    def compare_transitive(self) -> bool:
         m2 = self**2
         aux = m2 ^ self
         return aux.isnull() 

@@ -12,7 +12,7 @@ class Polynomial:
         self.__polynomial = np.array(array)
 
     @property
-    def polynomial(self):
+    def polynomial(self) -> np.ndarray:
         return self.__polynomial
 
     def __add__(self, other):
@@ -138,19 +138,16 @@ class Polynomial:
     def plot_function(self,x: Union[list,tuple,np.ndarray],
                       x_axis: str = 'x axis',
                       y_axis: str = 'y axis',
-                      title: str = 'function',
+                      title: str = 'polynomial',
                       color: str = 'r',
-                      label: Optional[str] = None,
-                      local_legend: Optional[str] = None) -> None:
-        if label is not None:
-            l_def = label
-        else:
-            l_def = 'f(x)'
+                      label: str = 'p(x)',
+                      local_legend: Optional[str] = None,
+                      style: str = '-') -> None:
         y = [self.function(xk) for xk in x]
         xl = plt.xlabel(x_axis)
         yl = plt.ylabel(y_axis)
         ttl = plt.title(title)
-        la = plt.plot(x, y, color, label=l_def)
+        la = plt.plot(x, y, color, label=label, ls = style)
         if local_legend is not None:
             ll=plt.legend(loc=local_legend)
         plt.show()
@@ -184,21 +181,6 @@ class Polynomial:
     def to_function(self):
         from calculus.functions import Function
         return Function(lambda x: sum(element*x**i for i, element in enumerate(self.polynomial)))
-
-    def graphic(self, x_interval: Union[list,tuple,np.ndarray],
-                color: str = 'r', 
-                x_label: str = 'x axis', 
-                y_label: str ='y axis', 
-                title: str= 'p(x)' , 
-                style: str= '-'):
-        
-        y = [self(xk) for xk in x_interval]
-        xl = plt.xlabel(x_label)
-        yl = plt.ylabel(y_label)
-        ttl = plt.title(title)
-        la = plt.plot(x_interval, y, color, ls= style)
-        plt.show()
-
 
 
     """
