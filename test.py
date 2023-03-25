@@ -12,4 +12,4 @@ from time import time
 # print(a[1,0:])
 # np.any()
 
-print(Relation.prob_transitive(4))
+# print(Relation.prob_transitive(4))
