@@ -1,25 +1,27 @@
-from imports import *
 from calculus.functions import Function
-from linalg.arrays import Vector
 from linalg.newarrays import Array
+from calculus.constants import c
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 
 class ODE:
     def __init__(self,
-                 functions: Union[list,np.ndarray],
-                 x: Optional[Union[list,np.ndarray]]= None,
+                 functions: Array,
+                 x: list | Array | None = None,
                  iterations: int = 10*c.ITERATIONS,
                  decimals: int = 4) -> None:
 
-        if isinstance(x, Union[list,np.ndarray]):
-            self.__x_interval = np.array(x)
+        if isinstance(x, list | Array):
+            self.__x_interval = Array(x)
         else:
             self.__x_interval = None
         if not isinstance(functions, list):
             l = [functions]
             functions = l
-        self.__functions = Vector(functions)
+        self.__functions = Array(functions)
         self.__n = iterations
         self.__decimals = decimals
 
@@ -61,7 +63,7 @@ class ODE:
         else:
             raise KeyError
 
-    def _limit_check(self, x0: Optional[Union[int,float]], xf: Optional[Union[int,float]]) -> int:
+    def _limit_check(self, x0: int | float, xf: int | float) -> int:
         if x0 is None and xf is None:
             return False
         elif x0 is not None and xf is not None:
@@ -70,9 +72,9 @@ class ODE:
             raise ValueError
 
     def euler(self,
-              y0:Union[list,np.ndarray],
-              x0: Optional[Union[int,float]]=None,
-              xf: Optional[Union[int,float]]=None,
+              y0: list | np.ndarray | Array,
+              x0: int | float | None = None,
+              xf: int | float | None = None,
               graphic: bool = False):
 
         if bool(self._limit_check(x0,xf)):            
@@ -86,7 +88,7 @@ class ODE:
         y[0] = y0
         aux_x = np.arange(x0, xf, step)
         for i in range(1,self.n): 
-            y[i] = y[i-1] + step*(self.functions(aux_x[i], *y[i-1])).array
+            y[i] = y[i-1] + step*(self.functions(aux_x[i], *y[i-1]))
         y = y.transpose()
         if graphic:
             aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
@@ -96,13 +98,13 @@ class ODE:
             
 
     def euler2(self,
-               y0:Union[list,np.ndarray],
-               x0: Optional[Union[int,float]]=None,
-               xf: Optional[Union[int,float]]=None,
-               graphic: bool = False):
+              y0: list | np.ndarray | Array,
+              x0: int | float | None = None,
+              xf: int | float | None = None,
+              graphic: bool = False):
 
         
-        if bool(self._limit_check(x0,xf)):            
+        if self._limit_check(x0,xf):            
             if self.x_interval is None:
                 self.x_interval = np.array([x0,xf])
         else:
@@ -124,10 +126,10 @@ class ODE:
         return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
         
     def heun(self,
-             y0:Union[list,np.ndarray],
-             x0: Optional[Union[int,float]]=None,
-             xf: Optional[Union[int,float]]=None,
-             graphic: bool = False):
+              y0: list | np.ndarray | Array,
+              x0: int | float | None = None,
+              xf: int | float | None = None,
+              graphic: bool = False):
 
         
         if bool(self._limit_check(x0,xf)):            
@@ -150,11 +152,11 @@ class ODE:
             return aux
         return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
 
-    def nystrom(self, 
-                y0:Union[list,np.ndarray],
-                x0: Optional[Union[int,float]]=None,
-                xf: Optional[Union[int,float]]=None,
-                graphic: bool = False):
+    def nystrom(self,
+              y0: list | np.ndarray | Array,
+              x0: int | float | None = None,
+              xf: int | float | None = None,
+              graphic: bool = False):
         
         
         if bool(self._limit_check(x0,xf)):            
@@ -181,10 +183,10 @@ class ODE:
             return aux
         return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
         
-    def rk4(self, 
-            y0:Union[list,np.ndarray],
-            x0: Optional[Union[int,float]]=None,
-            xf: Optional[Union[int,float]]=None,
+    def rk4(self,
+            y0: list | np.ndarray | Array,
+            x0: int | float | None = None,
+            xf: int | float | None = None,
             graphic: bool = False):
 
         
@@ -213,9 +215,9 @@ class ODE:
         return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
 
     def adams_bashforth(self,
-                        y0:Union[list,np.ndarray],
-                        x0: Optional[Union[int,float]]=None,
-                        xf: Optional[Union[int,float]]=None,
+                        y0: list | np.ndarray | Array,
+                        x0: int | float | None = None,
+                        xf: int | float | None = None,
                         graphic: bool = False):
         
         
@@ -233,10 +235,10 @@ class ODE:
         return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
 
     def adams_moulton(self,
-              y0:Union[list,np.ndarray],
-              x0: Optional[Union[int,float]]=None,
-              xf: Optional[Union[int,float]]=None,
-              graphic: bool = False):
+                      y0: list | np.ndarray | Array,
+                      x0: int | float | None = None,
+                      xf: int | float | None = None,
+                      graphic: bool = False):
         
         
         if bool(self._limit_check(x0,xf)):            
@@ -253,9 +255,9 @@ class ODE:
         return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
 
     def adams3(self,
-               y0:Union[list,np.ndarray],
-               x0: Optional[Union[int,float]]=None,
-               xf: Optional[Union[int,float]]=None,
+               y0: list | np.ndarray | Array,
+               x0: int | float | None = None,
+               xf: int | float | None = None,
                graphic: bool = False):
         
         
@@ -273,9 +275,9 @@ class ODE:
         return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
 
     def adams4(self,
-               y0:Union[list,np.ndarray],
-               x0: Optional[Union[int,float]]=None,
-               xf: Optional[Union[int,float]]=None,
+               y0: list | np.ndarray | Array,
+               x0: int | float | None = None,
+               xf: int | float | None = None,
                graphic: bool = False):
         
         
@@ -293,10 +295,10 @@ class ODE:
         return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
 
     def shooting(self,
-                 y0:Union[list,np.ndarray],
-                 x0: Optional[Union[int,float]]=None,
-                 xf: Optional[Union[int,float]]=None,
-                 graphic: bool = False):
+              y0: list | np.ndarray | Array,
+              x0: int | float | None = None,
+              xf: int | float | None = None,
+              graphic: bool = False):
         
         
         if bool(self._limit_check(x0,xf)):            
@@ -312,11 +314,16 @@ class ODE:
         y[0] = y0
         return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
 
-    def bvp(self, 
-            y0: list[Union[int,float]], 
-            yf: list[Union[int,float]],
-            x0: Optional[Union[int,float]]=None,
-            xf: Optional[Union[int,float]]=None,
+# self,
+#               y0: list | np.ndarray | Array,
+#               x0: int | float | None = None,
+#               xf: int | float | None = None,
+#               graphic: bool = False
+    def bvp(self,
+            y0: list[int | float] | np.ndarray | Array,
+            yf: list[int | float],
+            x0: int | float | None = None,
+            xf: int | float | None = None,
             graphic: bool = False,
             n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
 
@@ -327,8 +334,8 @@ class PDE:
     pass
 
 class SolutionODE:
-    def __init__(self, solutions: Union[list,np.ndarray,pd.core.frame.DataFrame],
-                 functions: Optional[list] = None,
+    def __init__(self, solutions: list | np.ndarray | pd.core.frame.DataFrame,
+                 functions: list | None = None,
                  iterations: int = 10*c.ITERATIONS,
                  decimals: int = 4,
                  x_interval: list = None) -> None:
@@ -343,7 +350,7 @@ class SolutionODE:
             aux = solutions.T.to_numpy()
             self.__x = aux[0]
             self.__solutions = aux[1:]
-        elif isinstance(solutions, Union[list,np.ndarray]):
+        elif isinstance(solutions, list | np.ndarray):
             self.__x = np.arange(self.x_interval[0],self.x_interval[1],(self.x_interval[1]-self.x_interval[0])/iterations)
             self.__solutions = solutions
             self.__frame_format = self.to_frame()
@@ -398,16 +405,16 @@ class SolutionODE:
         elif type == 'percent':
             return [100*max(element).round(self.decimals) for element in rel_err]
         else: 
-            raise InvalidArgumentError
+            raise ValueError # InvalidArgumentError
 
     def to_graphic(self,
                     title: str = 'graphic',
                     x_axis:str='x axis',
                     y_axis: str = 'y axis',
-                    color: Optional[list[str]] = None,
-                    label:Optional[list[str]] = None,
-                    style: Optional[Union[list[str],str]] = None,
-                    legend_loc: Optional[str] = None)-> None:
+                    color: list[str] | None = None,
+                    label:list[str] | None= None,
+                    style: list[str] | str = None,
+                    legend_loc: str | None = None)-> None:
 
         l = []
         xl = plt.xlabel(x_axis)
@@ -430,10 +437,10 @@ class SolutionODE:
                     title: str = 'graphics',
                     x_axis:str='x axis',
                     y_axis: str = 'y axis',
-                    color: Optional[str] = None,
-                    label:Optional[str] = None,
-                    style: Optional[str] = None,
-                    legend_loc: Optional[str] = None)-> None:
+                    color: str | None = None,
+                    label:str | None = None,
+                    style: str | None = None,
+                    legend_loc: str | None = None)-> None:
         xl = plt.xlabel(x_axis)
         yl = plt.ylabel(y_axis)
         ttl = plt.title(title)
@@ -458,3 +465,5 @@ class SolutionODE:
         df = pd.DataFrame(data=d)
         df.set_index('x',inplace=True)
         return df    
+
+

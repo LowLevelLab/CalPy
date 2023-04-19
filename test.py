@@ -1,5 +1,6 @@
-# from linalg.arrays import *
-import numpy as np
+from linalg.newarrays import *
+from calculus.differential_equations2 import ODE
+# import numpy as np
 # import interpolation.regression as lin
 # from calculus.functions import Function
 # from poly.polynomials import Polynomial
@@ -7,6 +8,10 @@ import numpy as np
 # from discrete.boolArr import BoolMatrix
 # from discrete.relation import Relation
 # from time import time
+
+
+a = ODE([lambda x, y: y], [0,2])
+a.rk4([1],graphic=True)
 
 # a = Matrix(np.array([[1,2,3],[4,5,6],[7,8,9]]))
 # print(a[1,0:])
