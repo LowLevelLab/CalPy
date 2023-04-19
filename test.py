@@ -1,5 +1,5 @@
-from linalg.newarrays import *
-from calculus.differential_equations2 import ODE
+from linalg.arrays import Array
+from calculus.ode import ODE
 # import numpy as np
 # import interpolation.regression as lin
 # from calculus.functions import Function

@@ -1,5 +1,5 @@
 from imports import *
-import linalg.arrays as arr
+import linalg.oldarrays as arr
 
 
 class BoolMatrix:

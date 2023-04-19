@@ -1,4 +1,4 @@
-from linalg.arrays import *
+from linalg.oldarrays import *
 
 
 def tridiagonal(a11:Union[int,float],

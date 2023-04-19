@@ -1,6 +1,6 @@
 from calculus.functions import Function
-from linalg.newarrays import Array
-from calculus.constants import c
+from linalg.arrays import Array
+import constants as const
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,7 +11,7 @@ class ODE:
     def __init__(self,
                  functions: Array,
                  x: list | Array | None = None,
-                 iterations: int = 10*c.ITERATIONS,
+                 iterations: int = 10*const.ITERATIONS,
                  decimals: int = 4) -> None:
 
         if isinstance(x, list | Array):
@@ -325,7 +325,7 @@ class ODE:
             x0: int | float | None = None,
             xf: int | float | None = None,
             graphic: bool = False,
-            n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
+            n: int = 10*const.ITERATIONS) -> list[np.ndarray]:
 
         pass
 
@@ -336,7 +336,7 @@ class PDE:
 class SolutionODE:
     def __init__(self, solutions: list | np.ndarray | pd.core.frame.DataFrame,
                  functions: list | None = None,
-                 iterations: int = 10*c.ITERATIONS,
+                 iterations: int = 10*const.ITERATIONS,
                  decimals: int = 4,
                  x_interval: list = None) -> None:
 
@@ -393,7 +393,7 @@ class SolutionODE:
     def __str__(self) -> str:
         return str(self.solutions)
 
-    def error(self, n:int = 10*c.ITERATIONS, type: str = 'abs'):
+    def error(self, n:int = 10*const.ITERATIONS, type: str = 'abs'):
         x = np.arange(self.x_interval[0],self.x_interval[1],(self.x_interval[1]-self.x_interval[0])/n)
         y_ideal = [element(x) for element in self.exact]
         abs_err = y_ideal - self.solutions # self.solutions must be array here !!!!!!!!!!!!!!!

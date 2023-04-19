@@ -1,7 +1,7 @@
 from imports import *
 from calculus.functions import Function
-from linalg.arrays import Vector
-from linalg.newarrays import Array
+from linalg.oldarrays import Vector
+from linalg.arrays import Array
 
 
 
