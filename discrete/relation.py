@@ -1,6 +1,6 @@
 # from imports import *
 from time import time
-from numba import njit
+from numba import jit, njit
 import numpy as np
 from linalg.arrays import Array, BoolArray
 import asyncio
@@ -59,10 +59,8 @@ class Relation:
 
 @njit
 def prob_transitives(n: int) -> float:
-    # temp = time()
     aux = np.zeros((2**(n**2), n, n), dtype=np.bool_)
     for i in range(2**(n**2)):
         aux[i] = BoolArray(list(map(int, np.binary_repr(i, n**2))), shape=(n, n)).compare_transitive()
     count = np.sum(aux)
-    # duration = time() - temp
     return count, count / aux.size

@@ -1,18 +1,6 @@
-# from linalg.arrays import Array
-# from calculus.ode import ODE
-# from linalg.linalg import validate_gj
+
 import numpy as np
-# import interpolation.regression as lin
-# from calculus.functions import Function
-# from poly.polynomials import Polynomial
-# from linalg.arrays import Vector, Matrix
-# from discrete.boolArr import BoolMatrix
 from discrete.relation import prob_transitives
-# from time import time
-
-# a = np.array([[0, 0, 0],[0, 5, 6]], dtype=np.bool_)
-# print(a.any())
-
 
 # a = ODE([lambda x, y: y], [0,2])
 # a.rk4([1],graphic=True)
@@ -22,7 +10,7 @@ from discrete.relation import prob_transitives
 # np.any()
 
 
-print(prob_transitives(4))
+print(prob_transitives(5))
 
 
 

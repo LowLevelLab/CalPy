@@ -1,4 +1,6 @@
 import numpy as np
+from numba import jit, boolean, njit
+from numba.experimental import jitclass
 # from imports import *
 # from complex import Complex
 
@@ -86,7 +88,7 @@ class Array(np.ndarray):
 
 
 
-
+@jitclass([('array', boolean[:,:])])
 class BoolArray(Array):
     def __new__(cls, input_array, *, shape=None, order=None):
         return super().__new__(cls, input_array, dtype=np.bool_, shape=shape, order=order)
@@ -97,18 +99,16 @@ class BoolArray(Array):
     def isone(self) -> bool:
         if not self.shape[0]:
             return False
-        for element in self:
-            if not all(element):
-                return False
-        return True
+        return self.all()
 
     def isnull(self) -> bool:
         if not self.shape[0]:
             return True
         return not self.any()
-        
+
+    @njit   
     def compare_transitive(self) -> bool:
-        return (self**2 ^ self).isnull() 
+        return np.array_equal(self, self**2) 
 
 
 
