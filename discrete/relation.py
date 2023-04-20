@@ -1,14 +1,18 @@
-from imports import *
-import linalg.oldarrays as arr
-from discrete.boolArr import BoolMatrix
+# from imports import *
+from time import time
+from numba import njit
+import numpy as np
+from linalg.arrays import Array, BoolArray
+import asyncio
+# from discrete.boolArr import BoolArray
 
 
 class Relation:
     def __init__(self, array) -> None:
-        self.__matrix_form = BoolMatrix(array)
+        self.__matrix_form = BoolArray(array)
 
     @property
-    def matrix_form(self) -> BoolMatrix:
+    def matrix_form(self) -> BoolArray:
         return self.__matrix_form
 
     def verify_reflexive(self) -> bool:
@@ -33,35 +37,32 @@ class Relation:
         pass
 
     @staticmethod
-    def prob_simmetry(self, n: int) -> tuple:
+    def prob_simmetry(n: int) -> float:
         pass
     
     @staticmethod
-    def prob_reflexive(self, n: int) -> tuple:
+    def prob_reflexive(n: int) -> float:
         pass
-
+    
+    
     @staticmethod
-    def prob_transitive(n: int) -> tuple:
+    def prob_transitive(n: int) -> float:
         temp = time()
-        l = []
         aux = []
-        e = n**2
-        for i in range(2**e):
-            a = i
-            while a != 0:
-                if a%2:
-                    l.append(0)
-                else:
-                    l.append(1)
-                a = a>>1
-            if len(l) != n**2:
-                for element in [0 for element in range(n**2-len(l))]:
-                    l.append(element)
-            aux.append(int(BoolMatrix(arr.Matrix([l[len(l)//n*k:len(l)//n*(k+1)] for k in range(n)])).compare_transitive()))
+        for i in range(2**(n**2)):
+            l = list(map(int,np.binary_repr(i, n**2)))
+            aux.append(BoolArray(l,shape=(n,n)).compare_transitive())
             l.clear()
+        aux = np.array(aux,dtype=np.int8)
         print(time()-temp)
-        return (sum(aux), sum(aux)/len(aux))
+        return (np.sum(aux), np.sum(aux)/aux.shape[0])
 
-
-
-        
+@njit
+def prob_transitives(n: int) -> float:
+    # temp = time()
+    aux = np.zeros((2**(n**2), n, n), dtype=np.bool_)
+    for i in range(2**(n**2)):
+        aux[i] = BoolArray(list(map(int, np.binary_repr(i, n**2))), shape=(n, n)).compare_transitive()
+    count = np.sum(aux)
+    # duration = time() - temp
+    return count, count / aux.size

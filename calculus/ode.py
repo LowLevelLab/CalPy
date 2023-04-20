@@ -90,11 +90,10 @@ class ODE:
         for i in range(1,self.n): 
             y[i] = y[i-1] + step*(self.functions(aux_x[i], *y[i-1]))
         y = y.transpose()
+        aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
         if graphic:
-            aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
             aux.to_graphic()
-            return aux
-        return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
+        return aux
             
 
     def euler2(self,
@@ -119,11 +118,10 @@ class ODE:
             y[i] = y[i-1] + step*((aux_y[i]-aux_y[i-1])/step+(aux_y[i+1]-aux_y[i])/step)/2
         y[-1] = aux_y[-1]
         y = y.transpose()
+        aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
         if graphic:
-            aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
             aux.to_graphic()
-            return aux
-        return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
+        return aux
         
     def heun(self,
               y0: list | np.ndarray | Array,
@@ -146,12 +144,11 @@ class ODE:
             y[i+1] = y[i] + step*self.functions(aux_x[i],*y[i])
             y[i+1] = y[i] + (step/2)*(self.functions(aux_x[i],*y[i])+self.functions(aux_x[i+1],*y[i+1]))
         y=y.transpose()
+        aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
         if graphic:
-            aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
             aux.to_graphic()
-            return aux
-        return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
-
+        return aux
+        
     def nystrom(self,
               y0: list | np.ndarray | Array,
               x0: int | float | None = None,
@@ -177,11 +174,10 @@ class ODE:
             k3[i] = self.functions(aux_x[i]+2*step/3, *(y[i]+2*step*k2[i]/3))
             y[i+1] = y[i] + (step/4)*(k1[i]+(3/2)*(k2[i]+k3[i]))
         y=y.transpose()
+        aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
         if graphic:
-            aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
             aux.to_graphic()
-            return aux
-        return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
+        return aux
         
     def rk4(self,
             y0: list | np.ndarray | Array,
@@ -208,12 +204,11 @@ class ODE:
             k4[i] = step * self.functions(aux_x[i] + step, *(y[i] + k3[i]))
             y[i+1] = y[i] + (k1[i] + 2 * (k2[i] + k3[i]) + k4[i]) / 6
         y=y.transpose()
+        aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
         if graphic:
-            aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
             aux.to_graphic()
-            return aux
-        return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
-
+        return aux
+        
     def adams_bashforth(self,
                         y0: list | np.ndarray | Array,
                         x0: int | float | None = None,
@@ -232,8 +227,11 @@ class ODE:
         y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
         y[0] = y0
-        return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
-
+        aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
+        if graphic:
+            aux.to_graphic()
+        return aux
+        
     def adams_moulton(self,
                       y0: list | np.ndarray | Array,
                       x0: int | float | None = None,
@@ -252,8 +250,11 @@ class ODE:
         y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
         y[0] = y0
-        return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
-
+        aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
+        if graphic:
+            aux.to_graphic()
+        return aux
+        
     def adams3(self,
                y0: list | np.ndarray | Array,
                x0: int | float | None = None,
@@ -272,8 +273,11 @@ class ODE:
         y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
         y[0] = y0
-        return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
-
+        aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
+        if graphic:
+            aux.to_graphic()
+        return aux
+        
     def adams4(self,
                y0: list | np.ndarray | Array,
                x0: int | float | None = None,
@@ -292,8 +296,11 @@ class ODE:
         y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
         y[0] = y0
-        return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
-
+        aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
+        if graphic:
+            aux.to_graphic()
+        return aux
+        
     def shooting(self,
               y0: list | np.ndarray | Array,
               x0: int | float | None = None,
@@ -312,13 +319,11 @@ class ODE:
         y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
         y[0] = y0
-        return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
-
-# self,
-#               y0: list | np.ndarray | Array,
-#               x0: int | float | None = None,
-#               xf: int | float | None = None,
-#               graphic: bool = False
+        aux = SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
+        if graphic:
+            aux.to_graphic()
+        return aux
+        
     def bvp(self,
             y0: list[int | float] | np.ndarray | Array,
             yf: list[int | float],
@@ -407,7 +412,7 @@ class SolutionODE:
         else: 
             raise ValueError # InvalidArgumentError
 
-    def to_graphic(self,
+    def to_graphic(self, *,
                     title: str = 'graphic',
                     x_axis:str='x axis',
                     y_axis: str = 'y axis',
@@ -433,7 +438,7 @@ class SolutionODE:
         plt.show()  
         l.clear()
     
-    def cross_map(self, i: int, j: int,
+    def cross_map(self, i: int, j: int, *,
                     title: str = 'graphics',
                     x_axis:str='x axis',
                     y_axis: str = 'y axis',
@@ -467,3 +472,5 @@ class SolutionODE:
         return df    
 
 
+if __name__ == '__main__':
+    pass
