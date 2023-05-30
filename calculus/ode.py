@@ -14,13 +14,9 @@ class ODE:
                  iterations: int = 10*const.ITERATIONS,
                  decimals: int = 4) -> None:
 
+        self.__x_interval: Array | None = None
         if isinstance(x, list | Array):
             self.__x_interval = Array(x)
-        else:
-            self.__x_interval = None
-        if not isinstance(functions, list):
-            l = [functions]
-            functions = l
         self.__functions = Array(functions)
         self.__n = iterations
         self.__decimals = decimals
@@ -32,6 +28,10 @@ class ODE:
     @property
     def x_interval(self):
         return self.__x_interval
+    
+    @x_interval.setter
+    def x_interval(self, value: Array):
+        self.__x_interval = value
 
     @ property
     def n(self):
@@ -63,7 +63,7 @@ class ODE:
         else:
             raise KeyError
 
-    def _limit_check(self, x0: int | float, xf: int | float) -> int:
+    def _limit_check(self, x0: int | float | None, xf: int | float | None) -> int:
         if x0 is None and xf is None:
             return False
         elif x0 is not None and xf is not None:
@@ -79,14 +79,14 @@ class ODE:
 
         if bool(self._limit_check(x0,xf)):            
             if self.x_interval is None:
-                self.x_interval = np.array([x0,xf])
+                self.x_interval = Array([x0,xf])
         else:
-            x0 = min(self.__x_interval)
-            xf = max(self.__x_interval)
+            x0 = min(self.x_interval)
+            xf = max(self.x_interval)
         step = (xf-x0)/self.n
         y = np.zeros((len(y0),self.n)).transpose()
         y[0] = y0
-        aux_x = np.arange(x0, xf, step)
+        aux_x: np.ndarray = np.arange(x0, xf, step)
         for i in range(1,self.n): 
             y[i] = y[i-1] + step*(self.functions(aux_x[i], *y[i-1]))
         y = y.transpose()
@@ -107,10 +107,10 @@ class ODE:
             if self.x_interval is None:
                 self.x_interval = np.array([x0,xf])
         else:
-            x0 = min(self.__x_interval)
-            xf = max(self.__x_interval)
+            xf = max(self.x_interval)
+            x0 = min(self.x_interval)
         step = (xf-x0)/self.n
-        aux_x = np.arange(x0, xf, step)
+        aux_x: np.ndarray = np.arange(x0, xf, step)
         aux_y = self.euler(y0,x0,xf).solutions.transpose()
         y = np.zeros((len(y0),self.n)).transpose()
         y[0] = y0
@@ -134,10 +134,10 @@ class ODE:
             if self.x_interval is None:
                 self.x_interval = np.array([x0,xf])
         else:
-            x0 = min(self.__x_interval)
-            xf = max(self.__x_interval)
+            x0 = min(self.x_interval)
+            xf = max(self.x_interval)
         step = (xf-x0)/self.n
-        aux_x = np.arange(x0, xf, step)
+        aux_x: np.ndarray = np.arange(x0, xf, step)
         y = np.zeros((len(y0),self.n)).transpose()
         y[0] = y0
         for i in range(self.n-1):
@@ -160,10 +160,10 @@ class ODE:
             if self.x_interval is None:
                 self.x_interval = np.array([x0,xf])
         else:
-            x0 = min(self.__x_interval)
-            xf = max(self.__x_interval)
+            x0 = min(self.x_interval)
+            xf = max(self.x_interval)
         step = (xf-x0)/self.n
-        aux_x = np.arange(x0, xf, step)
+        aux_x: np.ndarray = np.arange(x0, xf, step)
         y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3 = y.copy(),y.copy(),y.copy()
         y[0] = y0
@@ -190,10 +190,10 @@ class ODE:
             if self.x_interval is None:
                 self.x_interval = np.array([x0,xf])
         else:
-            x0 = min(self.__x_interval)
-            xf = max(self.__x_interval)
+            x0 = min(self.x_interval)
+            xf = max(self.x_interval)
         step = (xf-x0)/self.n
-        aux_x = np.arange(x0, xf, step)
+        aux_x: np.ndarray = np.arange(x0, xf, step)
         y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
         y[0] = y0
@@ -220,10 +220,10 @@ class ODE:
             if self.x_interval is None:
                 self.x_interval = np.array([x0,xf])
         else:
-            x0 = min(self.__x_interval)
-            xf = max(self.__x_interval)
+            x0 = min(self.x_interval)
+            xf = max(self.x_interval)
         step = (xf-x0)/self.n
-        aux_x = np.arange(x0, xf, step)
+        aux_x: np.ndarray = np.arange(x0, xf, step)
         y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
         y[0] = y0
@@ -243,10 +243,10 @@ class ODE:
             if self.x_interval is None:
                 self.x_interval = np.array([x0,xf])
         else:
-            x0 = min(self.__x_interval)
-            xf = max(self.__x_interval)
+            x0 = min(self.x_interval)
+            xf = max(self.x_interval)
         step = (xf-x0)/self.n
-        aux_x = np.arange(x0, xf, step)
+        aux_x: np.ndarray = np.arange(x0, xf, step)
         y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
         y[0] = y0
@@ -266,10 +266,10 @@ class ODE:
             if self.x_interval is None:
                 self.x_interval = np.array([x0,xf])
         else:
-            x0 = min(self.__x_interval)
-            xf = max(self.__x_interval)
+            x0 = min(self.x_interval)
+            xf = max(self.x_interval)
         step = (xf-x0)/self.n
-        aux_x = np.arange(x0, xf, step)
+        aux_x: np.ndarray = np.arange(x0, xf, step)
         y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
         y[0] = y0
@@ -289,10 +289,10 @@ class ODE:
             if self.x_interval is None:
                 self.x_interval = np.array([x0,xf])
         else:
-            x0 = min(self.__x_interval)
-            xf = max(self.__x_interval)
+            x0 = min(self.x_interval)
+            xf = max(self.x_interval)
         step = (xf-x0)/self.n
-        aux_x = np.arange(x0, xf, step)
+        aux_x: np.ndarray = np.arange(x0, xf, step)
         y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
         y[0] = y0
@@ -312,10 +312,10 @@ class ODE:
             if self.x_interval is None:
                 self.x_interval = np.array([x0,xf])
         else:
-            x0 = min(self.__x_interval)
-            xf = max(self.__x_interval)
+            x0 = min(self.x_interval)
+            xf = max(self.x_interval)
         step = (xf-x0)/self.n
-        aux_x = np.arange(x0, xf, step)
+        aux_x: np.ndarray = np.arange(x0, xf, step)
         y = np.zeros((len(y0),self.n)).transpose()
         k1,k2,k3,k4 = y.copy(),y.copy(),y.copy(),y.copy()
         y[0] = y0
@@ -324,15 +324,15 @@ class ODE:
             aux.to_graphic()
         return aux
         
-    def bvp(self,
-            y0: list[int | float] | np.ndarray | Array,
-            yf: list[int | float],
-            x0: int | float | None = None,
-            xf: int | float | None = None,
-            graphic: bool = False,
-            n: int = 10*const.ITERATIONS) -> list[np.ndarray]:
+    # def bvp(self,
+    #         y0: list[int | float] | np.ndarray | Array,
+    #         yf: list[int | float],
+    #         x0: int | float | None = None,
+    #         xf: int | float | None = None,
+    #         graphic: bool = False,
+    #         n: int = 10*const.ITERATIONS) -> list[np.ndarray]:
 
-        pass
+    #     pass
 
 
 class PDE:
@@ -343,7 +343,7 @@ class SolutionODE:
                  functions: list | None = None,
                  iterations: int = 10*const.ITERATIONS,
                  decimals: int = 4,
-                 x_interval: list = None) -> None:
+                 x_interval: list | None = None) -> None:
 
         self.__x_interval = x_interval
         self.__n = iterations
@@ -418,7 +418,7 @@ class SolutionODE:
                     y_axis: str = 'y axis',
                     color: list[str] | None = None,
                     label:list[str] | None= None,
-                    style: list[str] | str = None,
+                    style: list[str] | str = '-',
                     legend_loc: str | None = None)-> None:
 
         l = []

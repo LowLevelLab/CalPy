@@ -1,2 +1,6 @@
-**pyc
+**pyc*
 **.c
+**.vscode
+**.mypy_cache
+**.idea
+**__pycache__

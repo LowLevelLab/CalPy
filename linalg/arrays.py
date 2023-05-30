@@ -1,5 +1,5 @@
 import numpy as np
-from numba import jit, boolean, njit
+from numba import jit, njit, typeof
 from numba.experimental import jitclass
 # from imports import *
 # from complex import Complex
@@ -15,25 +15,19 @@ class Array(np.ndarray):
             obj = obj.copy(order=order)
         return obj.view(cls)
     
+    # def __str__(self):
+    #     return super().__str__()
+    
     def __array_finalize__(self, obj: None , /) -> None: # | NDArray[Any]
         if obj is None:
             return
-    
-    def __mul__(self, other):
-        return self@other
-
-    def __rmul__(self, other):
-        return self@other
-
-    def __imul__(self, other):
-        self = self@other
     
     def __call__(self, *args, **kwargs):
         values = [f(*args, **kwargs) for f in self.flat]
         return Array(values).reshape(self.shape)
 
     def det(self) -> float:
-        return np.linalg.det(self.array)
+        return np.linalg.det(self)
     
     def find_row(self, row) -> int:
         for i, element in enumerate(self):
@@ -68,10 +62,10 @@ class Array(np.ndarray):
             elif len(element) != len(self[0]):
                 raise TypeError()
         original_size = len(self)
-        final_size = len(self.array) + len(args)
-        self.array.resize((final_size,len(self[0])))
+        final_size = len(self) + len(args)
+        self.resize((final_size,len(self[0])))
         for i, element in enumerate(args):
-            self.array[original_size+i] = np.array(element)
+            self[original_size+i] = np.array(element)
 
     def __right_append(self,*args: tuple[list | np.ndarray]):
         aux = self.transpose().copy()
@@ -87,28 +81,27 @@ class Array(np.ndarray):
 
 
 
-
-@jitclass([('array', boolean[:,:])])
+# @jitclass([('array', boolean[:,:])])
 class BoolArray(Array):
     def __new__(cls, input_array, *, shape=None, order=None):
         return super().__new__(cls, input_array, dtype=np.bool_, shape=shape, order=order)
     
-    # def __str__(self) -> str:
-    #     return super().__str__()
+    def __str__(self) -> str:
+        return super().__str__()
 
-    def isone(self) -> bool:
+    def isone(self) -> np.bool_:
         if not self.shape[0]:
-            return False
+            return np.bool_(False)
         return self.all()
 
-    def isnull(self) -> bool:
+    def isnull(self) -> np.bool_:
         if not self.shape[0]:
-            return True
-        return not self.any()
+            return np.bool_(True)
+        return np.bool_(not self.any())
 
-    @njit   
+    # @jit(nopython=False)    
     def compare_transitive(self) -> bool:
-        return np.array_equal(self, self**2) 
+        return np.array_equal(self, self@self) 
 
 
 

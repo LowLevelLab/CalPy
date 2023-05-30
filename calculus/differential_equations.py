@@ -12,7 +12,7 @@ class ODE:
                  iterations: int = 10*c.ITERATIONS,
                  decimals: int = 4) -> None:
 
-        if isinstance(x, Union[list,np.ndarray]):
+        if isinstance(x, list |np.ndarray):
             self.__x_interval = np.array(x)
         else:
             self.__x_interval = None
@@ -30,6 +30,10 @@ class ODE:
     @property
     def x_interval(self):
         return self.__x_interval
+    
+    @x_interval.setter
+    def x_interval(self, arr: Array):
+        self.__x_interval = arr
 
     @ property
     def n(self):
