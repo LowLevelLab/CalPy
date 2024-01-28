@@ -1,21 +1,22 @@
-from linalg.oldarrays import *
+from imports import *
+from linalg.arrays import *
 
 
-def tridiagonal(a11:Union[int,float],
-                a12:Union[int,float],
-                a13:Union[int,float], 
-                dim:Union[int,float]):
+def tridiagonal(a11: Union[int,float],
+                a12: Union[int,float],
+                a13: Union[int,float], 
+                dim: int):
 
         for i in range(dim-1):
             pass
         pass
 
 def pentadiagonal(a11: Union[int,float],
-                  a12:Union[int,float],
-                  a13:Union[int,float], 
-                  a14:Union[int,float], 
-                  a15:Union[int,float], 
-                  dim:Union[int,float]):
+                  a12: Union[int,float],
+                  a13: Union[int,float], 
+                  a14: Union[int,float], 
+                  a15: Union[int,float], 
+                  dim: int):
         
         for i in range(dim-2):
             pass
@@ -28,7 +29,7 @@ def pentadiagonal(a11: Union[int,float],
 """
     
 
-def validate_gj(A: Array):
+def validate_gj(A: Array, b: Array):
     for i in range(A.shape[0]):
         if np.sum([abs(aux) for aux in A[i]])/abs(A[i,i])-1 >= 1:
             return False
@@ -39,7 +40,7 @@ def gauss_jacobi(A: Array, b: Array):
         raise InvalidMethodError(message='gauss-jacobi is an invalid method for this matrix')
     
 
-def validate_gs(A: Array):
+def validate_gs(A: Array, b: Array):
     def beta(i: int):
         pass
     def term(i):
@@ -53,9 +54,9 @@ def gauss_seidel(A: Array, b: Array):
     if not validate_gs(A,b):
         raise InvalidMethodError(message='gauss-seidel is an invalid method for this matrix')
 
-def validate_ss(A: Array):
-    for i in range(A.rows):
-        if not (A[i,:i+1] == Array(np.zeros(A.cols-i)) and A[i,:i+1] == Array(np.zeros(A.cols-i, dtype=int))):
+def validate_ss(A: Array, b: Array):
+    for i in range(A.shape[0]):
+        if not (A[i,:i+1] == Array(np.zeros(A.shape[1]-i)) and A[i,:i+1] == Array(np.zeros(A.shape[1]-i, dtype=int))):
             return False
     return True
     # triangular inferior
@@ -69,8 +70,8 @@ def successive_subs(A: Array, b: Array):
     return x
 
 
-def validate_rs(A: Array):
-    for i in range(A.rows):
+def validate_rs(A: Array, b: Array):
+    for i in range(A.shape[0]):
         if not (A[i,i+1:] == Array(np.zeros(i)) and A[i,i+1:] == Array(np.zeros(i, dtype=int))):
             return False
     return True 
@@ -134,7 +135,7 @@ def eigenvector(A: Array):
 
 def LR_decomposition(A: Array):
     n = A.shape[0]
-    r = np.copy(A)
+    r = A.copy()
     l = np.identity(n) 
     rt = r.transpose()
 
@@ -146,9 +147,9 @@ def LR_decomposition(A: Array):
     return l, r
 
 def LR_method(A: Array, iter=c.ITERATIONS):        
-    Ak = np.copy(A)
+    Ak = A.copy()
     for k in range(iter):
-        L, R = A.LR_decomposition(Ak)
+        L, R = LR_decomposition(Ak)
         Ak = R@L
     eigenvalues = np.diag(Ak)
     return eigenvalues

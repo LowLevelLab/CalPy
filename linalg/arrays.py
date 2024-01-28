@@ -1,6 +1,7 @@
 import numpy as np
 from numba import jit, njit, typeof
 from numba.experimental import jitclass
+from typing import Self
 # from imports import *
 # from complex import Complex
 
@@ -18,9 +19,9 @@ class Array(np.ndarray):
     # def __str__(self):
     #     return super().__str__()
     
-    def __array_finalize__(self, obj: None , /) -> None: # | NDArray[Any]
-        if obj is None:
-            return
+    # def __array_finalize__(self, obj: None , /) -> None: # | NDArray[Any]
+    #     if obj is None:
+    #         return
     
     def __call__(self, *args, **kwargs):
         values = [f(*args, **kwargs) for f in self.flat]

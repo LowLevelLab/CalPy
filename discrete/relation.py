@@ -3,8 +3,6 @@ from time import time
 from numba import jit, njit, int64, float64
 import numpy as np
 from linalg.arrays import Array, BoolArray
-import asyncio
-# from discrete.boolArr import BoolArray
 
 
 class Relation:
