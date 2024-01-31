@@ -16,13 +16,6 @@ class Array(np.ndarray):
             obj = obj.copy(order=order)
         return obj.view(cls)
     
-    # def __str__(self):
-    #     return super().__str__()
-    
-    # def __array_finalize__(self, obj: None , /) -> None: # | NDArray[Any]
-    #     if obj is None:
-    #         return
-    
     def __call__(self, *args, **kwargs):
         values = [f(*args, **kwargs) for f in self.flat]
         return Array(values).reshape(self.shape)
@@ -76,34 +69,6 @@ class Array(np.ndarray):
 
     def solve(self, b):
         return np.linalg.solve(self, b)
-
-
-    pass
-
-
-
-# @jitclass([('array', boolean[:,:])])
-class BoolArray(Array):
-    def __new__(cls, input_array, *, shape=None, order=None):
-        return super().__new__(cls, input_array, dtype=np.bool_, shape=shape, order=order)
-    
-    def __str__(self) -> str:
-        return super().__str__()
-
-    def isone(self) -> np.bool_:
-        if not self.shape[0]:
-            return np.bool_(False)
-        return self.all()
-
-    def isnull(self) -> np.bool_:
-        if not self.shape[0]:
-            return np.bool_(True)
-        return np.bool_(not self.any())
-
-    # @jit(nopython=False)    
-    def compare_transitive(self) -> bool:
-        return np.array_equal(self, self@self) 
-
 
 
 if __name__ == '__main__':

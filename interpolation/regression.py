@@ -3,7 +3,7 @@ from interpolation.interpolation import LagrangeInterpolation
 from calculus.functions import Function
 
 
-class Regression(metaclass=ABCMeta):
+class Regression:
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
         self.na = 'drop'
         if not isinstance(xlist, Union[list, np.ndarray]):
@@ -16,67 +16,40 @@ class Regression(metaclass=ABCMeta):
         if type(self) == Regression:  
             self.keys = ['exp','hpb','lin','log','pot','inv']
 
-            self.regressions = [ExpRegression(self.x, self.y),
-                    HypRegression(self.x, self.y),
-                    LinRegression(self.x, self.y),
-                    LogRegression(self.x, self.y),
-                    PotRegression(self.x, self.y),
-                    InvRegression(self.x, self.y)]     
+            self.regressions = [ExpRegression,
+                    HypRegression,
+                    LinRegression,
+                    LogRegression,
+                    PotRegression,
+                    InvRegression]     
 
             self.dict_reg = dict(element for element in zip(self.keys, self.regressions))     
 
-    # @property
-    # def x(self) -> np.ndarray:
-    #     return self.__x
-    # @x.setter
-    # def x(self,xlist) -> None:
-    #     if type(xlist) is not Union[np.ndarray,list]:
-    #         raise TypeError
-    #     else:
-    #         self.__x = xlist
-
-    
-    # @property
-    # def y(self) -> np.ndarray:
-    #     return self.__y
-    # @y.setter
-    # def y(self,ylist) -> None:
-    #     if type(ylist) is not Union[np.ndarray,list]:
-    #         raise TypeError
-    #     else:
-    #         self.__y = ylist
-
     def __call__(self, kind: str):
-
-        # !!!! avoid triggering functions before call !!!!
 
         if type(self) == Regression:
             if kind == 'opt':
                 return self.optimize()
             elif kind == 'pol':
                 return PolyRegression(self.x, self.y)
-            return self.dict_reg[kind]
+            return self.dict_reg[kind](self.x, self.y)
 
     def square_residue(self) -> float:
         f = Function(self.to_function())
         aux = np.array(f(self.x))
         return np.sum((self.y-aux)**2)
 
-    def coeff_regression(self) -> tuple:
-        return (0,0)
+    def coeff_regression(self) -> tuple: raise NotImplementedError()
 
-    # @abstractclassmethod
-    def to_function(self):
-        pass
+    def to_function(self): raise NotImplementedError()
 
     def optimize(self):
-        residues = [element.square_residue() for element in self.regressions]
-
-        # !!!! improve variables keys and residues !!!!
-
-        residue_map = dict(element for element in zip(residues,self.keys))
-        return self.dict_reg[residue_map[min(residue_map.keys())]]
-
+        residue_map = {}
+        for key, element in self.dict_reg.items():
+            aux = element(self.x, self.y)
+            residue_map[key] = aux.square_residue(), aux
+        self.residues = residue_map
+        return min(residue_map.items(), key=lambda x: x[1][0])[1][1]
 
 class LinRegression(Regression):
     def __init__(self, xlist: Union[list,np.ndarray], ylist: Union[list,np.ndarray]) -> None:
