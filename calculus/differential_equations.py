@@ -316,19 +316,6 @@ class ODE:
         y[0] = y0
         return SolutionODE(y,iterations=self.n,decimals=self.decimals,x_interval=self.x_interval)
 
-    def bvp(self, 
-            y0: list[Union[int,float]], 
-            yf: list[Union[int,float]],
-            x0: Optional[Union[int,float]]=None,
-            xf: Optional[Union[int,float]]=None,
-            graphic: bool = False,
-            n: int = 10*c.ITERATIONS) -> list[np.ndarray]:
-
-        pass
-
-
-class PDE:
-    pass
 
 class SolutionODE:
     def __init__(self, solutions: Union[list,np.ndarray,pd.core.frame.DataFrame],

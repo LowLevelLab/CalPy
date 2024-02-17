@@ -1,11 +1,14 @@
 from typing import Self
 
+class ColumnTransformer:
+    pass
+
 
 class Pipeline:
-    
+
     name = property(lambda self: self._name,
                     lambda self, value: setattr(self, '_name', value) if isinstance(value, str) else None)
-    
+
     id = 0
 
     def __init__(self, name: str = None):
@@ -22,6 +25,3 @@ class Pipeline:
 
     def build(self):
         pass
-
-
-    
