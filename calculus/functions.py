@@ -318,25 +318,3 @@ class Function:
         la = plt.plot(x, y, color, label=label, ls = style)
         ll=plt.legend(loc = local_legend)
         plt.show()
-
-
-    """
-    ### TRANSFORMS ###
-    """
-
-
-    def laplace(self, real: bool = True):
-        if real:
-            from calculus.transforms import Laplace
-            return Laplace(self)
-        else:
-            return self.complex_laplace()
-
-    def fourier(self):
-        from calculus.transforms import Fourier            
-        return Fourier(self)
-
-    def complex_laplace(self):
-        from calculus.transforms import ComplexLaplace
-        return ComplexLaplace(self)
-
